@@ -357,7 +357,7 @@ async def queue(ctx):
 		if ctx.guild.id in queues_info:
 			queue_info = split(queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
 		else:
-			return
+			return await ctx.send(embed=discord.Embed(title="Current Queue", description="Your current queue is empty!", color=0x515596))
 		content = []
 		for _ in queue_info:
 			content.append("")
