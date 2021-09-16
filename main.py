@@ -105,7 +105,7 @@ async def commands(ctx):
 	# Adding embed
 	embed = discord.Embed(
 		title="Beat Commands",
-		description="To watch full documentation [click here](http://example.com/).",
+		description="To watch full documentation [click here](https://github.com/Knedme/Beat).",
 		color=0x515596
 	)
 
@@ -139,7 +139,7 @@ async def info(ctx):
 	embed.add_field(name="Bot version:", value=f"🔨 `1.0.0`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `discord.py`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
-	embed.add_field(name="GitHub repository:", value="📕 [Click Here](http://example.com/)")
+	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="http://i.piccy.info/i9/af4f19335c0e09f0a8dbda34ece5a68b/1631681493/55409/1440926/1x.png")
 	embed.set_footer(text="v1.0.0 | Write +commands for the command list.")
