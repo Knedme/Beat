@@ -79,13 +79,13 @@ def check_new_songs(guild_id, vc):
 
 		# play music
 		try:
-			print("[log]: Successfully started to play song.")
 			vc.play(discord.FFmpegPCMAudio(
 				src_video_url,
 				executable=ffmpeg,
 				before_options=ffmpeg_options["before_options"],
 				options=ffmpeg_options["options"]
 			), after=lambda a: check_new_songs(guild_id, vc))
+			print("[log]: Successfully started to play song.")
 		except discord.errors.ClientException:
 			return
 
@@ -96,6 +96,17 @@ async def on_ready():
 	print("🔮 By Knedme\n")
 
 	await bot.change_presence(status=discord.Status.online, activity=discord.Game("+commands | +info"))  # setting activity
+
+
+# on command errors
+@bot.event
+async def on_command_error(ctx, err):
+	print(f"[error]: {err}")
+	await ctx.send(embed=discord.Embed(
+		title="Error",
+		description=err,
+		color=0x515596
+	))
 
 
 # commands command
@@ -162,10 +173,10 @@ async def play(ctx, *, video=None):
 
 	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
 		await channel.connect()
+		print("[log]: Successfully joined to the channel.")
 	else:  # else, just move to ctx author voice channel
 		await ctx.voice_client.move_to(channel)
 
-	print("[log]: Successfully joined to the channel.")
 	if video is not None:
 		# searching for a video
 
@@ -232,13 +243,13 @@ async def play(ctx, *, video=None):
 			print("[log]: Successfully queued playlist.")
 
 		try:
-			print("[log]: Successfully started to play song.")
 			vc.play(discord.FFmpegPCMAudio(
 				src_video_url,
 				executable=ffmpeg,
 				before_options=ffmpeg_options["before_options"],
 				options=ffmpeg_options["options"]
 			), after=lambda a: check_new_songs(ctx.guild.id, vc))  # calling the check_new_songs function after
+			print("[log]: Successfully started to play song.")
 		# playing the current music
 		except discord.errors.ClientException:
 			pass
@@ -280,7 +291,7 @@ async def skip(ctx):
 
 
 # leave command
-@bot.command(aliases=["l"])
+@bot.command(aliases=["l", "disconnect", "d"])
 async def leave(ctx):
 	if ctx.voice_client is None:
 		return await ctx.send("I am not connected to any voice channels.")
@@ -357,7 +368,11 @@ async def queue(ctx):
 		if ctx.guild.id in queues_info:
 			queue_info = split(queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
 		else:
-			return await ctx.send(embed=discord.Embed(title="Current Queue", description="Your current queue is empty!", color=0x515596))
+			return await ctx.send(embed=discord.Embed(
+				title="Current Queue",
+				description="Your current queue is empty!",
+				color=0x515596)
+			)
 		content = []
 		for _ in queue_info:
 			content.append("")
