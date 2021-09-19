@@ -189,6 +189,7 @@ async def play(ctx, *, video=None):
 						await ctx.send("Loading playlist...")
 					video_url = el
 		else:
+			print(f"[log]: Searching for \'{video_search}\'...")
 			video = VideosSearch(video, limit=1)
 			video_url = video.result()["result"][0]["link"]
 

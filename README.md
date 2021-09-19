@@ -44,5 +44,8 @@ Shows a list of commands.
 ### +info 
 Shows information about the bot.
 
-## 🌌 Versions
+## 🌌 Current Version
 Current bot version is **1.0.0**.
+
+## 🆘 Support
+If you find a bug, please write here: Knedme#3143 or Knedme@yandex.ru
