@@ -110,7 +110,7 @@ async def on_command_error(ctx, err):
 
 
 # commands command
-@bot.command(aliases=["c"])
+@bot.command(aliases=["comands", "c"])
 async def commands(ctx):
 
 	# Adding embed
@@ -195,14 +195,18 @@ async def play(ctx, *, video=None):
 			video_url = video.result()["result"][0]["link"]
 
 		vc = ctx.voice_client
+		is_stream = False
 
 		# finding video
 		try:
 			try:
-				information = youtube_dl.YoutubeDL({"format": "bestaudio"}).extract_info(video_url, download=False)
+				information = youtube_dl.YoutubeDL(
+					{"format": "bestaudio", "cookiefile": cookies}).extract_info(video_url, download=False)
 			except youtube_dl.utils.ExtractorError and youtube_dl.utils.DownloadError:
 				# if there is an error, changing format.
-				information = youtube_dl.YoutubeDL({"format": "95"}).extract_info(video_url, download=False)
+				information = youtube_dl.YoutubeDL(
+					{"format": "95", "cookiefile": cookies}).extract_info(video_url, download=False)
+				is_stream = True
 		except youtube_dl.utils.ExtractorError and youtube_dl.utils.DownloadError:
 			# if unknown error
 			print("[error]: Error while reading video url.")
@@ -212,6 +216,8 @@ async def play(ctx, *, video=None):
 		if "_type" not in information:
 			src_video_url = information["formats"][0]["url"]  # source url
 			video_title = information["title"]
+			if is_stream:
+				video_title = video_title[0:-17]
 
 			# filling queues
 			if ctx.guild.id in queues:
@@ -309,7 +315,7 @@ async def music(ctx):
 		return await ctx.send("Something went wrong.")
 
 	src_video_url = information["formats"][0]["url"]  # source url
-	video_title = information["title"]
+	video_title = information["title"][0:-17]
 
 	# filling queue
 	if ctx.guild.id in queues:
