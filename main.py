@@ -1,6 +1,6 @@
 # Main file
 
-# Beat discord music bot v.1.0.0
+# Beat discord music bot v.1.0.1
 # Made by Knedme
 
 import discord
@@ -125,6 +125,7 @@ async def commands(ctx):
 		value="Bot joins to your channel and plays music from a video link.",
 		inline=False
 	)
+	embed.add_field(name="+music", value="Bot joins to your channel and plays lofi.", inline=False)
 	embed.add_field(name="+leave", value="Leave the voice channel.", inline=False)
 	embed.add_field(name="+skip", value="Skips current track.", inline=False)
 	embed.add_field(name="+pause", value="Pause music.", inline=False)
@@ -134,7 +135,7 @@ async def commands(ctx):
 	embed.add_field(name="+commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="+info", value="Information about the bot.")
 
-	embed.set_footer(text="v1.0.0")
+	embed.set_footer(text="v1.0.1")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -147,13 +148,13 @@ async def info(ctx):
 	embed = discord.Embed(title="Information about Beat", color=0x515596)
 
 	embed.add_field(name="Server count:", value=f"🔺 `{len(bot.guilds)}`", inline=False)
-	embed.add_field(name="Bot version:", value=f"🔨 `1.0.0`", inline=False)
+	embed.add_field(name="Bot version:", value=f"🔨 `1.0.1`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `discord.py`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
 	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="http://i.piccy.info/i9/af4f19335c0e09f0a8dbda34ece5a68b/1631681493/55409/1440926/1x.png")
-	embed.set_footer(text="v1.0.0 | Write +commands for the command list.")
+	embed.set_footer(text="v1.0.1 | Write +commands for the command list.")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -271,6 +272,84 @@ async def play(ctx, *, video=None):
 				color=0x515596)
 
 		await ctx.send(embed=embed)
+
+
+# lofi/music command
+# noinspection PyTypeChecker
+@bot.command(aliases=["lofi", "lo-fi", "chill"])
+async def music(ctx):
+	global queues
+	global now_playing_pos
+	global queues_info
+
+	if ctx.author.voice is None:
+		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
+
+	channel = ctx.author.voice.channel
+
+	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
+		await channel.connect()
+		print("[log]: Successfully joined to the channel.")
+	else:  # else, just move to ctx author voice channel
+		await ctx.voice_client.move_to(channel)
+
+	# searching for lofi hip hop
+	print(f"[log]: Searching for \'lofi hip hop\'...")
+	video = VideosSearch("lofi hip hop", limit=1)
+	video_url = video.result()["result"][0]["link"]
+
+	vc = ctx.voice_client
+
+	# finding video
+	try:
+		information = youtube_dl.YoutubeDL({"format": "95"}).extract_info(video_url, download=False)
+	except youtube_dl.utils.ExtractorError and youtube_dl.utils.DownloadError:
+		# if unknown error
+		print("[error]: Error while reading video url.")
+		return await ctx.send("Something went wrong.")
+
+	src_video_url = information["formats"][0]["url"]  # source url
+	video_title = information["title"]
+
+	# filling queue
+	if ctx.guild.id in queues:
+		queues[ctx.guild.id].append({"url": video_url, "src_url": src_video_url})
+		queues_info[ctx.guild.id].append({"name": information["title"], "url": video_url})
+	else:
+		queues[ctx.guild.id] = [{"url": video_url, "src_url": src_video_url}]
+		now_playing_pos[ctx.guild.id] = 0
+		queues_info[ctx.guild.id] = [{"name": information["title"], "url": video_url}]
+
+	print("[log]: Successfully queued song.")
+
+	try:
+		vc.play(discord.FFmpegPCMAudio(
+			src_video_url,
+			executable=ffmpeg,
+			before_options=ffmpeg_options["before_options"],
+			options=ffmpeg_options["options"]
+		), after=lambda a: check_new_songs(ctx.guild.id, vc))  # calling the check_new_songs function after
+		# playing the current music
+		print("[log]: Successfully started to play song.")
+	except discord.errors.ClientException:
+		pass
+
+	# Adding embed, depending on the queue
+	if len(queues[ctx.guild.id]) != 1:
+		embed = discord.Embed(
+			title="Queue",
+			description=f"🔎 Searching for `lofi hip hop`\n\n" +
+			f"""✅ [{video_title}]({video_url}) - successfully added to queue.""",
+			color=0x515596)
+	else:
+		embed = discord.Embed(
+			title="Now playing",
+			description=f"✅ Successfully joined to `{channel}`\n\n" +
+			f"🔎 Searching for `lofi hip hop`\n\n" +
+			f"""▶️ Now playing - [{video_title}]({video_url})""",
+			color=0x515596)
+
+	await ctx.send(embed=embed)
 
 
 # skip command

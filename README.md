@@ -16,6 +16,9 @@ Joins to the channel and plays music from video link or search query.
 
 ![Play Example](https://media0.giphy.com/media/rePkBe8XXuQoAXkfMw/giphy.gif?cid=790b761177aaeebaf4284d30d61ca900f1123669bc3ae45c&rid=giphy.gif&ct=g)
 
+### +music
+Joins to the channel and plays lofi hip hop.
+
 ### +leave
 Leaves the voice channel.
 
@@ -45,7 +48,7 @@ Shows a list of commands.
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.0.0**.
+Current bot version is **1.0.1**.
 
 ## 🆘 Support
-If you find a bug, please write here: Knedme#3143 or Knedme@yandex.ru
+If you find a bug, or you have ideas how to make bot better, please write here: Knedme#3143 or Knedme@yandex.ru
