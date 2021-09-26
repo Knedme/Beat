@@ -7,6 +7,7 @@ import discord
 import youtube_dl
 from youtubesearchpython import VideosSearch
 from discord.ext import commands
+from discord_components import *  # for buttons
 from config import *
 
 bot = commands.Bot(command_prefix=prefix)
@@ -15,17 +16,6 @@ loops = {}  # for +loop command
 queues = {}  # for queues
 now_playing_pos = {}  # to display the current song in +queue command correctly
 queues_info = {}  # all queue info, for +queue command
-
-
-# function, which splitting the queue into queues of 10 songs
-def split(arr, size):
-	arrays = []
-	while len(arr) > size:
-		pice = arr[:size]
-		arrays.append(pice)
-		arr = arr[size:]
-	arrays.append(arr)
-	return arrays
 
 
 # function, which checks the queue and replays the remaining links and "loop" loops
@@ -95,6 +85,7 @@ async def on_ready():
 	print("\n🎵 Beat has been launched!")
 	print("🔮 By Knedme\n")
 
+	DiscordComponents(bot)  # init discord components
 	await bot.change_presence(status=discord.Status.online, activity=discord.Game("+commands | +info"))  # setting activity
 
 
@@ -194,7 +185,6 @@ async def play(ctx, *, video=None):
 			video = VideosSearch(video, limit=1)
 			video_url = video.result()["result"][0]["link"]
 
-		vc = ctx.voice_client
 		is_stream = False
 
 		# finding video
@@ -249,6 +239,8 @@ async def play(ctx, *, video=None):
 					queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url})
 
 			print("[log]: Successfully queued playlist.")
+
+		vc = ctx.voice_client
 
 		try:
 			vc.play(discord.FFmpegPCMAudio(
@@ -452,7 +444,15 @@ async def queue(ctx):
 	else:
 		position = 0
 		if ctx.guild.id in queues_info:
-			queue_info = split(queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
+			# splitting the queue into queues of 10 songs
+			array = []
+			arr = queues_info[ctx.guild.id]
+			while len(arr) > 10:
+				pice = queues_info[ctx.guild.id][:10]
+				arr.append(pice)
+				arr = queues_info[ctx.guild.id][10:]
+			array.append(arr)
+			queue_info = array
 		else:
 			return await ctx.send(embed=discord.Embed(
 				title="Current Queue",
