@@ -17,6 +17,17 @@ now_playing_pos = {}  # to display the current song in +queue command correctly
 queues_info = {}  # all queue info, for +queue command
 
 
+# function, which splitting the queue into queues of 10 songs
+def split(arr, size):
+	arrays = []
+	while len(arr) > size:
+		pice = arr[:size]
+		arrays.append(pice)
+		arr = arr[size:]
+	arrays.append(arr)
+	return arrays
+
+
 # function, which checks the queue and replays the remaining links and "loop" loops
 def check_new_songs(guild_id, vc):
 	global queues
@@ -442,15 +453,7 @@ async def queue(ctx):
 	else:
 		position = 0
 		if ctx.guild.id in queues_info:
-			# splitting the queue into queues of 10 songs
-			array = []
-			arr = queues_info[ctx.guild.id]
-			while len(arr) > 10:
-				pice = queues_info[ctx.guild.id][:10]
-				arr.append(pice)
-				arr = queues_info[ctx.guild.id][10:]
-			array.append(arr)
-			queue_info = array
+			queue_info = split(queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
 		else:
 			return await ctx.send(embed=discord.Embed(
 				title="Current Queue",
@@ -463,6 +466,7 @@ async def queue(ctx):
 		page = 0
 
 		# filling content with songs
+
 		for i in queue_info:
 			for j in i:
 				if position == now_playing_pos[ctx.guild.id]:
