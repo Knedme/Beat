@@ -7,7 +7,6 @@ import discord
 import youtube_dl
 from youtubesearchpython import VideosSearch
 from discord.ext import commands
-from discord_components import *  # for buttons
 from config import *
 
 bot = commands.Bot(command_prefix=prefix)
@@ -85,7 +84,6 @@ async def on_ready():
 	print("\n🎵 Beat has been launched!")
 	print("🔮 By Knedme\n")
 
-	DiscordComponents(bot)  # init discord components
 	await bot.change_presence(status=discord.Status.online, activity=discord.Game("+commands | +info"))  # setting activity
 
 
