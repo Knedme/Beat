@@ -1,3 +1,5 @@
+# BOT INVITE IS TEMPORARILY UNAVAILABLE UNTIL 9 OCTOBER 2O21
+
 <img src="http://i.piccy.info/i9/37aa9b8e20bca4ac7655a2e956e4433c/1631730793/163906/1440926/round1x.png" align="right" width="15%">
 
 # Beat
