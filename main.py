@@ -182,11 +182,11 @@ async def play(ctx, *, video=None):
 		# searching for a video
 
 		video_search = video
-		if "https://www.youtube.com/watch?v=" in video or "https://youtu.be/" in video:
+		if "https://www.youtube.com/" in video or "https://youtu.be/" in video:
 			video_url = ""
 			for el in video.split():
-				if "https://www.youtube.com/watch?v=" in el or "https://youtu.be/" in el:
-					if "&list=" in el:
+				if "https://www.youtube.com/" in el or "https://youtu.be/" in el:
+					if "list=" in el:
 						await ctx.send("Loading playlist...")
 					video_url = el
 		else:
@@ -196,7 +196,7 @@ async def play(ctx, *, video=None):
 
 		is_stream = False
 
-		# finding video
+		# finding source video url
 		try:
 			try:
 				information = youtube_dl.YoutubeDL(
