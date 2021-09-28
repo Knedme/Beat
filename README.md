@@ -75,19 +75,19 @@ To install the FFmpeg, [click here](https://github.com/BtbN/FFmpeg-Builds/releas
 ### 4. Get cookies.txt file
 Before getting cookies.txt, make sure that you are logged in YouTube.
 
-**In Google Chrome:**
+#### In Google Chrome:
 
 Install this extension: https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid?hl=en
 
 Go to YouTube.com, click on extensions in the right-up corner, Get cookies.txt, click on Export and save the file.
 
-**In Firefox:**
+#### In Firefox:
 
 Install this extension: https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/
 
 Go to YouTube.com, click on cookies in the right-up corner, click on "Current Site", and save the file
 
-**In other browsers:**
+#### In other browsers:
 
 In other browsers, just google "How to get cookie.txt in your_browser"
 
