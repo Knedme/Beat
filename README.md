@@ -1,4 +1,4 @@
-# BOT INVITE IS TEMPORARILY UNAVAILABLE UNTIL 9 OCTOBER 2O21
+# BOT INVITE IS TEMPORARILY UNAVAILABLE UNTIL 9 OCTOBER 2021
 
 <img src="http://i.piccy.info/i9/37aa9b8e20bca4ac7655a2e956e4433c/1631730793/163906/1440926/round1x.png" align="right" width="15%">
 
@@ -52,5 +52,59 @@ Shows information about the bot.
 ## 🌌 Current Version
 Current bot version is **1.0.1**.
 
+## ⬇️ How to install the bot?
+
+### 1. Install Python 3.9.x
+Go to the official python website (or just [click here](https://www.python.org/downloads/)) and download from there python 3.9.x
+
+**When you install python make sure this checkbox is checked:**
+
+![PATH](https://i.imgur.com/cg9ESAK.png)
+
+### 2. Install the dependencies
+After installing python, open terminal and write this 3 commands:
+````commandline
+pip install discord.py
+pip install youtube_dl
+pip install youtube-search-python
+````
+
+### 3. Install the FFmpeg
+To install the FFmpeg, [click here](https://github.com/BtbN/FFmpeg-Builds/releases) and choose the version you need. Then, unzip the archive in a folder convenient for you.
+
+### 4. Get cookies.txt file
+Before getting cookies.txt, make sure that you are logged in YouTube.
+
+**In Google Chrome:**
+
+Install this extension: https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid?hl=en
+
+Go to YouTube.com, click on extensions in the right-up corner, Get cookies.txt, click on Export and save the file.
+
+**In Firefox:**
+
+Install this extension: https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/
+
+Go to YouTube.com, click on cookies in the right-up corner, click on "Current Site", and save the file
+
+**In other browsers:**
+
+In other browsers, just google "How to get cookie.txt in your_browser"
+
+### 5. Change the config.py
+First, you need to download [the latest release](https://github.com/Knedme/Beat/releases) of bot.
+
+Then, open config.py in any text editor and write there your token from discord developers portal and paths to files like that:
+
+![config.py](https://i.imgur.com/gaK8Dhx.png)
+
+### 6. Run the bot
+Finally, open terminal in the folder where your bot is located and write:
+```commandline
+python main.py
+```
+
+Congratulations, you have successfully installed the bot and launched it.
+
 ## 🆘 Support
-If you find a bug, or you have ideas how to make bot better, please write here: Knedme#3143 or Knedme@yandex.ru
+If you find a bug, or you have a question please write here: Knedme#3143 or Knedme@yandex.ru
