@@ -41,7 +41,7 @@ Shows current queue of songs.
 <img src="https://media4.giphy.com/media/4kk1LOqn7rC19iml6v/giphy.gif?cid=790b7611afec1afb5c7e2f4e8cb1b6f8a459421fb07a694b&rid=giphy.gif&ct=g" width="35%">
 
 ### +loop
-Enables / Disables loop. If it is enabled, current song will be looped.
+Enables/Disables Queue/Track loop.
 
 ### +commands
 Shows a list of commands.

@@ -1,6 +1,6 @@
 # Config file
 
-token = "SDDg5o-3[feasdasss0d042w32l,;n4;,l34"  # write here your bot token
+token = "bot-token"  # write here your bot token
 
 ffmpeg = "C:/ffmpeg/ffmpeg.exe"  # write here your ffmpeg path
 

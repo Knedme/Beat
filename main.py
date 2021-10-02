@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix=prefix)
 loops = {}  # for +loop command
 queues = {}  # for queues
 now_playing_pos = {}  # to display the current song in +queue command correctly
-queues_info = {}  # all queue info, for +queue command
+all_queues_info = {}  # all queue info, for +queue command
 
 
 # function, which splitting the queue into queues of 10 songs
@@ -32,13 +32,13 @@ def split(arr, size):
 def check_new_songs(guild_id, vc):
 	global queues
 	global now_playing_pos
-	global queues_info
+	global all_queues_info
 
 	if not vc.is_connected():
 		if guild_id in queues:
 			del queues[guild_id]
-		if guild_id in queues_info:
-			del queues_info[guild_id]
+		if guild_id in all_queues_info:
+			del all_queues_info[guild_id]
 		if guild_id in loops:
 			del loops[guild_id]
 		if guild_id in now_playing_pos:
@@ -47,35 +47,43 @@ def check_new_songs(guild_id, vc):
 
 	# "loop" loops
 	if guild_id in loops:
-		src_video_url = queues[guild_id][0]["src_url"]
+		if loops[guild_id] == "Current track":
+			src_video_url = queues[guild_id][0]["src_url"]
 
-		# play music
-		try:
-			print("[log]: Successfully started to play looped song.")
-			vc.play(discord.FFmpegPCMAudio(
-				src_video_url,
-				executable=ffmpeg,
-				before_options=ffmpeg_options["before_options"],
-				options=ffmpeg_options["options"]
-			), after=lambda a: check_new_songs(guild_id, vc))
-		except discord.errors.ClientException:
-			pass
+			# play music
+			try:
+				print("[log]: Successfully started to play looped song.")
+				vc.play(discord.FFmpegPCMAudio(
+					src_video_url,
+					executable=ffmpeg,
+					before_options=ffmpeg_options["before_options"],
+					options=ffmpeg_options["options"]
+				), after=lambda a: check_new_songs(guild_id, vc))
+			except discord.errors.ClientException:
+				pass
 
-		return
+			return
 
 	if queues[guild_id]:
 		queues[guild_id].pop(0)
 
-		# if queue is empty, deleting the variables and return
 		try:
 			src_video_url = queues[guild_id][0]["src_url"]
-		except IndexError:
-			del queues[guild_id]
-			del queues_info[guild_id]
-			del now_playing_pos[guild_id]
-			return
+		except IndexError:  # if queue is empty, deleting the variables and return
+			if guild_id not in loops or loops[guild_id] != "queue":
+				del queues[guild_id]
+				del all_queues_info[guild_id]
+				del now_playing_pos[guild_id]
+				return
 
-		now_playing_pos[guild_id] += 1
+			# looping queue
+			for track in all_queues_info:
+				queues[guild_id].append({"url": track["url"], "src_url": track["src_url"]})
+			now_playing_pos[guild_id] = 0
+			src_video_url = queues[guild_id][0]["src_url"]
+
+		if guild_id not in loops or loops[guild_id] != "queue":
+			now_playing_pos[guild_id] += 1
 
 		# play music
 		try:
@@ -102,11 +110,14 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, err):
 	print(f"[error]: {err}")
-	await ctx.send(embed=discord.Embed(
-		title="Error",
-		description=err,
-		color=0x515596
-	))
+
+	# if it's "command not found" error, sending it
+	if "Command" in err and "is not found" in err:
+		await ctx.send(embed=discord.Embed(
+			title="Command not found",
+			description=err,
+			color=0x515596
+		))
 
 
 # commands command
@@ -165,7 +176,7 @@ async def info(ctx):
 async def play(ctx, *, video=None):
 	global queues
 	global now_playing_pos
-	global queues_info
+	global all_queues_info
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
@@ -221,11 +232,11 @@ async def play(ctx, *, video=None):
 			# filling queues
 			if ctx.guild.id in queues:
 				queues[ctx.guild.id].append({"url": video_url, "src_url": src_video_url})
-				queues_info[ctx.guild.id].append({"name": information["title"], "url": video_url})
+				all_queues_info[ctx.guild.id].append({"name": video_title, "url": video_url, "src_url": src_video_url})
 			else:
 				queues[ctx.guild.id] = [{"url": video_url, "src_url": src_video_url}]
 				now_playing_pos[ctx.guild.id] = 0
-				queues_info[ctx.guild.id] = [{"name": information["title"], "url": video_url}]
+				all_queues_info[ctx.guild.id] = [{"name": video_title, "url": video_url, "src_url": src_video_url}]
 
 			print("[log]: Successfully queued song.")
 		else:  # else queueing playlist
@@ -235,21 +246,23 @@ async def play(ctx, *, video=None):
 			# queuing first song
 			if ctx.guild.id in queues:
 				queues[ctx.guild.id].append({"url": video_url, "src_url": src_video_url})
-				queues_info[ctx.guild.id].append({"name": information["entries"][0]["title"], "url": video_url})
+				all_queues_info[ctx.guild.id].append(
+					{"name": information["entries"][0]["title"], "url": video_url, "src_url": src_video_url})
 			else:
 				queues[ctx.guild.id] = [{"url": video_url, "src_url": src_video_url}]
 				now_playing_pos[ctx.guild.id] = 0
-				queues_info[ctx.guild.id] = [{"name": information["entries"][0]["title"], "url": video_url}]
+				all_queues_info[ctx.guild.id] = [
+					{"name": information["entries"][0]["title"], "url": video_url, "src_url": src_video_url}]
 
 			# queuing another songs
 			for v in information["entries"]:
 				if information["entries"].index(v) != 0:
 					queues[ctx.guild.id].append({"url": video_url, "src_url": v["url"]})
-					queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url})
+					all_queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url})
 
 			print("[log]: Successfully queued playlist.")
 
-		vc = ctx.voice_client
+		vc = ctx.voice_clien
 
 		try:
 			vc.play(discord.FFmpegPCMAudio(
@@ -287,7 +300,7 @@ async def play(ctx, *, video=None):
 async def music(ctx):
 	global queues
 	global now_playing_pos
-	global queues_info
+	global all_queues_info
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
@@ -321,11 +334,13 @@ async def music(ctx):
 	# filling queue
 	if ctx.guild.id in queues:
 		queues[ctx.guild.id].append({"url": video_url, "src_url": src_video_url})
-		queues_info[ctx.guild.id].append({"name": information["title"], "url": video_url})
+		all_queues_info[ctx.guild.id].append(
+			{"name": information["title"], "url": video_url, "src_url": src_video_url})
 	else:
 		queues[ctx.guild.id] = [{"url": video_url, "src_url": src_video_url}]
 		now_playing_pos[ctx.guild.id] = 0
-		queues_info[ctx.guild.id] = [{"name": information["title"], "url": video_url}]
+		all_queues_info[ctx.guild.id] = [
+			{"name": information["title"], "url": video_url, "src_url": src_video_url}]
 
 	print("[log]: Successfully queued song.")
 
@@ -357,6 +372,11 @@ async def music(ctx):
 			color=0x515596)
 
 	await ctx.send(embed=embed)
+
+
+@bot.command(aliases=["v"])
+async def volume(ctx):
+	await ctx.send("volume")
 
 
 # skip command
@@ -396,8 +416,8 @@ async def leave(ctx):
 	# clearing queues and loops
 	if ctx.guild.id in queues:
 		del queues[ctx.guild.id]
-	if ctx.guild.id in queues_info:
-		del queues_info[ctx.guild.id]
+	if ctx.guild.id in all_queues_info:
+		del all_queues_info[ctx.guild.id]
 	if ctx.guild.id in loops:
 		del loops[ctx.guild.id]
 	if ctx.guild.id in now_playing_pos:
@@ -445,15 +465,15 @@ async def resume(ctx):
 # queue command
 @bot.command(aliases=["q"])
 async def queue(ctx):
-	global queues_info
+	global all_queues_info
 
 	# if queue is empty, sending empty embed
 	if ctx.voice_client is None:
 		await ctx.send(embed=discord.Embed(title="Current Queue", description="Your current queue is empty!", color=0x515596))
 	else:
 		position = 0
-		if ctx.guild.id in queues_info:
-			queue_info = split(queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
+		if ctx.guild.id in all_queues_info:
+			queue_info = split(all_queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
 		else:
 			return await ctx.send(embed=discord.Embed(
 				title="Current Queue",
@@ -500,15 +520,20 @@ async def loop(ctx):
 		return await ctx.send("You are in the wrong channel.")
 
 	# sending a message depending on whether is loop turned on or off
-	if ctx.guild.id not in loops or not loops[ctx.guild.id]:
+	if ctx.guild.id not in loops or loops[ctx.guild.id] == "None":
 		await ctx.message.add_reaction("✅")  # adding a reaction
-		await ctx.send("Loop enabled!")
-		loops[ctx.guild.id] = True
-		print("[log]: Successfully enabled loop.")
+		await ctx.send("Queue loop enabled!")
+		loops[ctx.guild.id] = "Queue"
+		print("[log]: Successfully enabled queue loop.")
+	elif loops[ctx.guild.id] == "Queue":
+		await ctx.message.add_reaction("✅")  # adding a reaction
+		await ctx.send("Current track loop enabled!")
+		loops[ctx.guild.id] = "Current track"
+		print("[log]: Successfully enabled current track loop.")
 	else:
 		await ctx.message.add_reaction("✅")  # adding a reaction
 		await ctx.send("Loop disabled!")
-		del loops[ctx.guild.id]
+		loops[ctx.guild.id] = "None"
 		print("[log]: Successfully disabled loop.")
 
 
