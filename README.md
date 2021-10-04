@@ -50,7 +50,7 @@ Shows a list of commands.
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.0.1**.
+Current bot version is **1.0.2**.
 
 ## ⬇️ How to install the bot?
 

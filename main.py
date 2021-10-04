@@ -1,6 +1,6 @@
 # Main file
 
-# Beat discord music bot v.1.0.1
+# Beat discord music bot v.1.0.2
 # Made by Knedme
 
 import discord
@@ -28,7 +28,7 @@ def split(arr, size):
 	return arrays
 
 
-# function, which checks the queue and replays the remaining links and "loop" loops
+# function, which "loop" loops, checks the queue and replays the remaining links
 def check_new_songs(guild_id, vc):
 	global queues
 	global now_playing_pos
@@ -47,12 +47,12 @@ def check_new_songs(guild_id, vc):
 
 	# "loop" loops
 	if guild_id in loops:
-		if loops[guild_id] == "Current track":
+		if loops[guild_id] == "current track":
 			src_video_url = queues[guild_id][0]["src_url"]
 
 			# play music
 			try:
-				print("[log]: Successfully started to play looped song.")
+				print("[log]: Successfully started to play song.")
 				vc.play(discord.FFmpegPCMAudio(
 					src_video_url,
 					executable=ffmpeg,
@@ -69,21 +69,20 @@ def check_new_songs(guild_id, vc):
 
 		try:
 			src_video_url = queues[guild_id][0]["src_url"]
-		except IndexError:  # if queue is empty, deleting the variables and return
+			now_playing_pos[guild_id] += 1
+		except IndexError:
+			# if queue is empty and there is no queue loop, deleting the variables and return
 			if guild_id not in loops or loops[guild_id] != "queue":
 				del queues[guild_id]
 				del all_queues_info[guild_id]
 				del now_playing_pos[guild_id]
 				return
 
-			# looping queue
-			for track in all_queues_info:
+			# else looping queue
+			for track in all_queues_info[guild_id]:
 				queues[guild_id].append({"url": track["url"], "src_url": track["src_url"]})
 			now_playing_pos[guild_id] = 0
 			src_video_url = queues[guild_id][0]["src_url"]
-
-		if guild_id not in loops or loops[guild_id] != "queue":
-			now_playing_pos[guild_id] += 1
 
 		# play music
 		try:
@@ -112,12 +111,11 @@ async def on_command_error(ctx, err):
 	print(f"[error]: {err}")
 
 	# if it's "command not found" error, sending it
-	if "Command" in err and "is not found" in err:
+	if "Command" in f"{err}" and "is not found" in f"{err}":
 		await ctx.send(embed=discord.Embed(
 			title="Command not found",
-			description=err,
-			color=0x515596
-		))
+			description=f"{err}\nTo see a list of commands, use the command: `+commands`",
+			color=0x515596))
 
 
 # commands command
@@ -146,7 +144,7 @@ async def commands(ctx):
 	embed.add_field(name="+commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="+info", value="Information about the bot.")
 
-	embed.set_footer(text="v1.0.1")
+	embed.set_footer(text="v1.0.2")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -159,13 +157,13 @@ async def info(ctx):
 	embed = discord.Embed(title="Information about Beat", color=0x515596)
 
 	embed.add_field(name="Server count:", value=f"🔺 `{len(bot.guilds)}`", inline=False)
-	embed.add_field(name="Bot version:", value=f"🔨 `1.0.1`", inline=False)
+	embed.add_field(name="Bot version:", value=f"🔨 `1.0.2`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `discord.py`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
 	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="http://i.piccy.info/i9/af4f19335c0e09f0a8dbda34ece5a68b/1631681493/55409/1440926/1x.png")
-	embed.set_footer(text="v1.0.1 | Write +commands for the command list.")
+	embed.set_footer(text="v1.0.2 | Write +commands for the command list.")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -258,11 +256,11 @@ async def play(ctx, *, video=None):
 			for v in information["entries"]:
 				if information["entries"].index(v) != 0:
 					queues[ctx.guild.id].append({"url": video_url, "src_url": v["url"]})
-					all_queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url})
+					all_queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url, "src_url": src_video_url})
 
 			print("[log]: Successfully queued playlist.")
 
-		vc = ctx.voice_clien
+		vc = ctx.voice_client
 
 		try:
 			vc.play(discord.FFmpegPCMAudio(
@@ -372,11 +370,6 @@ async def music(ctx):
 			color=0x515596)
 
 	await ctx.send(embed=embed)
-
-
-@bot.command(aliases=["v"])
-async def volume(ctx):
-	await ctx.send("volume")
 
 
 # skip command
@@ -497,12 +490,28 @@ async def queue(ctx):
 			if page < len(queue_info) - 1:
 				page += 1
 
+		# getting information about loops
+		loops_info = ""
+		if ctx.guild.id not in loops or loops[ctx.guild.id] == "none":
+			loops_info = "🔁 Queue loop: disabled | 🔁 Current track loop: disabled"
+		elif loops[ctx.guild.id] == "queue":
+			loops_info = "🔁 Queue loop: enabled | 🔁 Current track loop: disabled"
+		elif loops[ctx.guild.id] == "current track":
+			loops_info = "🔁 Queue loop: disabled | 🔁 Current track loop: enabled"
+
 		# sending the entire queue of 10 songs for each message
 		for songs in content:
 			if content.index(songs) == 0:
-				await ctx.send(embed=discord.Embed(title="Current Queue", description=songs, color=0x515596))
+				await ctx.send(embed=discord.Embed(
+					title="Current Queue",
+					description=songs,
+					color=0x515596)
+					.set_footer(text=loops_info))
 			else:
-				await ctx.send(embed=discord.Embed(description=songs, color=0x515596))
+				await ctx.send(embed=discord.Embed(
+					description=songs,
+					color=0x515596)
+					.set_footer(text=loops_info))
 
 
 # loop command
@@ -520,20 +529,17 @@ async def loop(ctx):
 		return await ctx.send("You are in the wrong channel.")
 
 	# sending a message depending on whether is loop turned on or off
-	if ctx.guild.id not in loops or loops[ctx.guild.id] == "None":
-		await ctx.message.add_reaction("✅")  # adding a reaction
-		await ctx.send("Queue loop enabled!")
-		loops[ctx.guild.id] = "Queue"
+	if ctx.guild.id not in loops or loops[ctx.guild.id] == "none":
+		await ctx.send("🔁 Queue loop enabled!")
+		loops[ctx.guild.id] = "queue"
 		print("[log]: Successfully enabled queue loop.")
-	elif loops[ctx.guild.id] == "Queue":
-		await ctx.message.add_reaction("✅")  # adding a reaction
-		await ctx.send("Current track loop enabled!")
-		loops[ctx.guild.id] = "Current track"
+	elif loops[ctx.guild.id] == "queue":
+		await ctx.send("🔁 Current track loop enabled!")
+		loops[ctx.guild.id] = "current track"
 		print("[log]: Successfully enabled current track loop.")
 	else:
-		await ctx.message.add_reaction("✅")  # adding a reaction
-		await ctx.send("Loop disabled!")
-		loops[ctx.guild.id] = "None"
+		await ctx.send("❎ Loop disabled!")
+		loops[ctx.guild.id] = "none"
 		print("[log]: Successfully disabled loop.")
 
 
