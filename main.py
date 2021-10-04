@@ -168,6 +168,25 @@ async def info(ctx):
 	await ctx.send(embed=embed)  # sending a message with embed
 
 
+# join command
+@bot.command(aliases=["j"])
+async def join(ctx):
+	if ctx.author.voice is None:
+		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
+
+	channel = ctx.author.voice.channel
+
+	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
+		await channel.connect()
+		print("[log]: Successfully joined to the channel.")
+	else:  # else, just moving to ctx author voice channel
+		await ctx.voice_client.move_to(channel)
+
+	await ctx.guild.change_voice_state(channel=channel, self_mute=False, self_deaf=True)  # self deaf
+
+	await ctx.send(f"✅ Successfully joined to `{channel}`")
+
+
 # play command
 # noinspection PyTypeChecker
 @bot.command(aliases=["p"])
@@ -184,8 +203,10 @@ async def play(ctx, *, video=None):
 	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
 		await channel.connect()
 		print("[log]: Successfully joined to the channel.")
-	else:  # else, just move to ctx author voice channel
+	else:  # else, just moving to ctx author voice channel
 		await ctx.voice_client.move_to(channel)
+
+	await ctx.guild.change_voice_state(channel=channel, self_mute=False, self_deaf=True)  # self deaf
 
 	if video is not None:
 		# searching for a video
@@ -376,7 +397,7 @@ async def music(ctx):
 @bot.command(aliases=["s"])
 async def skip(ctx):
 	if ctx.voice_client is None:
-		return await ctx.send("I am not connected to any voice channels.")
+		return await ctx.send("I am not playing any songs for you.")
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
@@ -394,7 +415,7 @@ async def skip(ctx):
 @bot.command(aliases=["l", "disconnect", "d"])
 async def leave(ctx):
 	if ctx.voice_client is None:
-		return await ctx.send("I am not connected to any voice channels.")
+		return await ctx.send("I am not playing any songs for you.")
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
@@ -423,7 +444,7 @@ async def leave(ctx):
 @bot.command(aliases=["stop"])
 async def pause(ctx):
 	if ctx.voice_client is None:
-		return await ctx.send("I am not connected to any voice channels.")
+		return await ctx.send("I am not playing any songs for you.")
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
@@ -441,7 +462,7 @@ async def pause(ctx):
 @bot.command(aliases=["continue", "unpause"])
 async def resume(ctx):
 	if ctx.voice_client is None:
-		return await ctx.send("I am not connected to any voice channels.")
+		return await ctx.send("I am not playing any songs for you.")
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")
@@ -520,7 +541,7 @@ async def loop(ctx):
 	global loops
 
 	if ctx.voice_client is None:
-		return await ctx.send("I am not connected to any voice channels.")
+		return await ctx.send("I am not playing any songs for you.")
 
 	if ctx.author.voice is None:
 		return await ctx.send(f"{ctx.author.mention}, You have to be connected to a voice channel.")

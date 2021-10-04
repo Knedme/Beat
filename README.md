@@ -11,8 +11,11 @@ To invite bot to your server [click here](https://discord.com/api/oauth2/authori
 
 ## 📚 Commands
 
+### +join
+Joins to the voice channel.
+
 ### +play youtube-video-link (or search query)
-Joins to the channel and plays music from video link or search query.
+Joins to the voice channel and plays music from video link or search query.
 
 **Example:**
 
