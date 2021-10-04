@@ -129,9 +129,10 @@ async def commands(ctx):
 		color=0x515596
 	)
 
+	embed.add_field(name="+join", value="Bot joins to your voice channel.", inline=False)
 	embed.add_field(
 		name="+play youtube-video-link (or search)",
-		value="Bot joins to your channel and plays music from a video link.",
+		value="Bot joins to your voice channel and plays music from a video link.",
 		inline=False
 	)
 	embed.add_field(name="+music", value="Bot joins to your channel and plays lofi.", inline=False)
