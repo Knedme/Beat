@@ -5,7 +5,6 @@
 
 import discord
 import youtube_dl
-import youtube_dl.utils
 from youtubesearchpython import VideosSearch
 from discord.ext import commands
 from multiprocessing import Pool
