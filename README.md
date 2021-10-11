@@ -46,6 +46,9 @@ Shows current queue of songs.
 ### +loop
 Enables/Disables Queue/Track loop.
 
+### +support
+Shows support contact.
+
 ### +commands
 Shows a list of commands.
 

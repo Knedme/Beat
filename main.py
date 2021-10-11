@@ -152,6 +152,7 @@ async def commands(ctx):
 	embed.add_field(name="+resume", value="Resume music.", inline=False)
 	embed.add_field(name="+queue", value="Shows current queue.", inline=False)
 	embed.add_field(name="+loop", value="Loops current track.", inline=False)
+	embed.add_field(name="+support", value="Shows support contact.", inline=False)
 	embed.add_field(name="+commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="+info", value="Information about the bot.")
 	embed.set_footer(text="v1.0.2")
@@ -176,6 +177,16 @@ async def info(ctx):
 	embed.set_footer(text="v1.0.2 | Write +commands for the command list.")
 
 	await ctx.send(embed=embed)  # sending a message with embed
+
+
+# support command
+@bot.command()
+async def support(ctx):
+	await ctx.send(embed=discord.Embed(
+		title="Support",
+		description="If you have any problems, please write here: `Knedme#3143`",
+		color=0x515596
+	))
 
 
 # join command
