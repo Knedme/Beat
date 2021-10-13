@@ -54,7 +54,6 @@ def check_new_songs(guild_id, vc):
 
 			# play music
 			try:
-				print("[log]: Successfully started to play song.")
 				vc.play(discord.FFmpegPCMAudio(
 					src_video_url,
 					executable=ffmpeg,
@@ -94,7 +93,6 @@ def check_new_songs(guild_id, vc):
 				before_options=ffmpeg_options["before_options"],
 				options=ffmpeg_options["options"]
 			), after=lambda a: check_new_songs(guild_id, vc))
-			print("[log]: Successfully started to play song.")
 		except discord.errors.ClientException:
 			return
 
@@ -199,7 +197,6 @@ async def join(ctx):
 
 	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
 		await channel.connect()
-		print("[log]: Successfully joined to the channel.")
 	else:  # else, just moving to ctx author voice channel
 		await ctx.voice_client.move_to(channel)
 
@@ -222,7 +219,6 @@ async def play(ctx, *, video=None):
 	channel = ctx.author.voice.channel
 	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
 		await channel.connect()
-		print("[log]: Successfully joined to the channel.")
 	else:  # else, just moving to ctx author voice channel
 		await ctx.voice_client.move_to(channel)
 
@@ -241,7 +237,6 @@ async def play(ctx, *, video=None):
 					await ctx.send("Loading playlist...")
 				video_url = el
 	else:
-		print(f"[log]: Searching for \'{video_search}\'...")
 		video = VideosSearch(video, limit=1)
 		video_url = video.result()["result"][0]["link"]
 
@@ -266,7 +261,6 @@ async def play(ctx, *, video=None):
 			now_playing_pos[ctx.guild.id] = 0
 			all_queues_info[ctx.guild.id] = [{"name": video_title, "url": video_url, "src_url": src_video_url}]
 
-		print("[log]: Successfully queued song.")
 	else:  # else queueing playlist
 		src_video_url = information["entries"][0]["url"]
 		video_title = information["title"]
@@ -288,8 +282,6 @@ async def play(ctx, *, video=None):
 				queues[ctx.guild.id].append({"url": video_url, "src_url": v["url"]})
 				all_queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url, "src_url": src_video_url})
 
-		print("[log]: Successfully queued playlist.")
-
 	vc = ctx.voice_client
 
 	try:
@@ -300,7 +292,6 @@ async def play(ctx, *, video=None):
 			options=ffmpeg_options["options"]
 			# calling the check_new_songs function after playing the current music
 		), after=lambda a: check_new_songs(ctx.guild.id, vc))
-		print("[log]: Successfully started to play song.")
 	except discord.errors.ClientException:
 		pass
 
@@ -336,14 +327,12 @@ async def music(ctx):
 	channel = ctx.author.voice.channel
 	if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
 		await channel.connect()
-		print("[log]: Successfully joined to the channel.")
 	else:  # else, just moving to ctx author voice channel
 		await ctx.voice_client.move_to(channel)
 
 	await ctx.guild.change_voice_state(channel=channel, self_mute=False, self_deaf=True)  # self deaf
 
 	# searching for lofi hip hop
-	print(f"[log]: Searching for \'lofi hip hop\'...")
 	video = VideosSearch("lofi hip hop", limit=1)
 	video_url = video.result()["result"][0]["link"]
 
@@ -369,7 +358,6 @@ async def music(ctx):
 		now_playing_pos[ctx.guild.id] = 0
 		all_queues_info[ctx.guild.id] = [
 			{"name": information["title"], "url": video_url, "src_url": src_video_url}]
-	print("[log]: Successfully queued song.")
 
 	vc = ctx.voice_client
 
@@ -381,7 +369,6 @@ async def music(ctx):
 			options=ffmpeg_options["options"]
 			# calling the check_new_songs function after playing the current music
 		), after=lambda a: check_new_songs(ctx.guild.id, vc))
-		print("[log]: Successfully started to play song.")
 	except discord.errors.ClientException:
 		pass
 
@@ -418,7 +405,6 @@ async def skip(ctx):
 	ctx.voice_client.stop()  # skipping current track
 	await ctx.message.add_reaction("✅")  # adding a reaction
 	await ctx.send("Successfully skipped.")
-	print("[log]: Song skipped successfully.")
 
 
 # leave command
@@ -447,8 +433,6 @@ async def leave(ctx):
 	if ctx.guild.id in now_playing_pos:
 		del now_playing_pos[ctx.guild.id]
 
-	print("[log]: Successfully left the channel.")
-
 
 # stop command
 @bot.command(aliases=["stop"])
@@ -465,7 +449,6 @@ async def pause(ctx):
 	ctx.voice_client.pause()  # stopping a music
 	await ctx.message.add_reaction("✅")  # adding a reaction
 	await ctx.send("⏸️ Successfully paused.")
-	print("[log]: Successfully paused song.")
 
 
 # continue command
@@ -483,7 +466,6 @@ async def resume(ctx):
 	ctx.voice_client.resume()  # resume music
 	await ctx.message.add_reaction("✅")  # adding a reaction
 	await ctx.send("▶️ Successfully resumed.")
-	print("[log]: Successfully unpaused song.")
 
 
 # queue command
@@ -563,15 +545,12 @@ async def loop(ctx):
 	if ctx.guild.id not in loops or loops[ctx.guild.id] == "none":
 		await ctx.send("🔁 Queue loop enabled!")
 		loops[ctx.guild.id] = "queue"
-		print("[log]: Successfully enabled queue loop.")
 	elif loops[ctx.guild.id] == "queue":
 		await ctx.send("🔁 Current track loop enabled!")
 		loops[ctx.guild.id] = "current track"
-		print("[log]: Successfully enabled current track loop.")
 	else:
 		await ctx.send("❎ Loop disabled!")
 		loops[ctx.guild.id] = "none"
-		print("[log]: Successfully disabled loop.")
 
 
 if __name__ == "__main__":
