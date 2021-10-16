@@ -554,4 +554,5 @@ async def loop(ctx):
 
 
 if __name__ == "__main__":
-	bot.run(token)  # bot launch
+	while True:  # auto-reboot if bot crashed
+		bot.run(token)  # bot launch
