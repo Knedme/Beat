@@ -4,10 +4,6 @@
 # Beat
 **Beat** is a new free open source discord music bot for playing music from YouTube. **Beat** is done on [discord.py](https://discordpy.readthedocs.io).
 
-## ❓ How to invite bot to your server
-
-To invite bot to your server [click here](https://discord.com/api/oauth2/authorize?client_id=883986382719189033&permissions=3230784&scope=bot).
-
 ## 📚 Commands
 
 ### +join
@@ -72,6 +68,7 @@ After installing python, open terminal and write this 3 commands:
 pip install discord.py
 pip install youtube_dl
 pip install youtube-search-python
+pip inslall PyNaCl
 ````
 
 ### 3. Install the FFmpeg
