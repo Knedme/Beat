@@ -1,10 +1,10 @@
 # Main file
 
-# Beat discord music bot v.1.0.2
+# Beat discord music bot v.1.0.3
 # Made by Knedme
 
 import discord
-import youtube_dl
+import yt_dlp
 from youtubesearchpython import VideosSearch
 from discord.ext import commands
 from multiprocessing import Pool
@@ -15,18 +15,7 @@ bot = commands.Bot(command_prefix=prefix)
 loops = {}  # for +loop command
 queues = {}  # for queues
 now_playing_pos = {}  # to display the current song in +queue command correctly
-all_queues_info = {}  # all queue info, for +queue command
-
-
-# function, which splitting the queue into queues of 10 songs
-def split(arr, size):
-	arrays = []
-	while len(arr) > size:
-		pice = arr[:size]
-		arrays.append(pice)
-		arr = arr[size:]
-	arrays.append(arr)
-	return arrays
+all_queues_info = {}  # all queues info, for +queue command
 
 
 # function, which "loop" loops, checks the queue and replays the remaining links
@@ -100,9 +89,9 @@ def check_new_songs(guild_id, vc):
 # this function extracts all info from video url
 def extract_info(url):
 	try:
-		return youtube_dl.YoutubeDL({"format": "bestaudio", "cookiefile": cookies}).extract_info(url, download=False)
-	except youtube_dl.utils.ExtractorError and youtube_dl.utils.DownloadError:  # if there is an error, changing format
-		return youtube_dl.YoutubeDL({"format": "95", "cookiefile": cookies}).extract_info(url, download=False)
+		return yt_dlp.YoutubeDL({"format": "bestaudio", "cookiefile": cookies}).extract_info(url, download=False)
+	except yt_dlp.utils.ExtractorError and yt_dlp.utils.DownloadError:  # if there is an error, changing format
+		return yt_dlp.YoutubeDL({"format": "95", "cookiefile": cookies}).extract_info(url, download=False)
 
 
 @bot.event
@@ -153,7 +142,7 @@ async def commands(ctx):
 	embed.add_field(name="+support", value="Shows support contact.", inline=False)
 	embed.add_field(name="+commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="+info", value="Information about the bot.")
-	embed.set_footer(text="v1.0.2")
+	embed.set_footer(text="v1.0.3")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -166,13 +155,13 @@ async def info(ctx):
 	embed = discord.Embed(title="Information about Beat", color=0x515596)
 
 	embed.add_field(name="Server count:", value=f"🔺 `{len(bot.guilds)}`", inline=False)
-	embed.add_field(name="Bot version:", value=f"🔨 `1.0.2`", inline=False)
+	embed.add_field(name="Bot version:", value=f"🔨 `1.0.3`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `discord.py`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
 	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="http://i.piccy.info/i9/af4f19335c0e09f0a8dbda34ece5a68b/1631681493/55409/1440926/1x.png")
-	embed.set_footer(text="v1.0.2 | Write +commands for the command list.")
+	embed.set_footer(text="v1.0.3 | Write +commands for the command list.")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -249,7 +238,7 @@ async def play(ctx, *, video=None):
 
 	# if it's not a playlist, playing the song as usual
 	if "_type" not in information:
-		src_video_url = information["formats"][0]["url"]  # source url
+		src_video_url = information["formats"][3]["url"]  # source url
 		video_title = information["title"]
 
 		# filling queues
@@ -262,7 +251,7 @@ async def play(ctx, *, video=None):
 			all_queues_info[ctx.guild.id] = [{"name": video_title, "url": video_url, "src_url": src_video_url}]
 
 	else:  # else queueing playlist
-		src_video_url = information["entries"][0]["url"]
+		src_video_url = information["entries"][0]["formats"][3]["url"]
 		video_title = information["title"]
 
 		# queuing first song
@@ -279,7 +268,7 @@ async def play(ctx, *, video=None):
 		# queuing another songs
 		for v in information["entries"]:
 			if information["entries"].index(v) != 0:
-				queues[ctx.guild.id].append({"url": video_url, "src_url": v["url"]})
+				queues[ctx.guild.id].append({"url": video_url, "src_url": v["formats"][3]["url"]})
 				all_queues_info[ctx.guild.id].append({"name": v["title"], "url": video_url, "src_url": src_video_url})
 
 	vc = ctx.voice_client
@@ -479,7 +468,15 @@ async def queue(ctx):
 	else:
 		position = 0
 		if ctx.guild.id in all_queues_info:
-			queue_info = split(all_queues_info[ctx.guild.id], 10)  # splitting the queue into queues of 10 songs
+			# splitting the queue into queues of 10 songs
+			queue_info = all_queues_info[ctx.guild.id]
+			arrays = []
+			while len(queue_info) > 10:
+				pice = queue_info[:10]
+				arrays.append(pice)
+				queue_info = queue_info[10:]
+			arrays.append(queue_info)
+			queue_info = arrays
 		else:
 			return await ctx.send(embed=discord.Embed(
 				title="Current Queue",
@@ -543,14 +540,14 @@ async def loop(ctx):
 
 	# sending a message depending on whether is loop turned on or off
 	if ctx.guild.id not in loops or loops[ctx.guild.id] == "none":
-		await ctx.send("🔁 Queue loop enabled!")
 		loops[ctx.guild.id] = "queue"
+		await ctx.send("🔁 Queue loop enabled!")
 	elif loops[ctx.guild.id] == "queue":
-		await ctx.send("🔁 Current track loop enabled!")
 		loops[ctx.guild.id] = "current track"
+		await ctx.send("🔁 Current track loop enabled!")
 	else:
-		await ctx.send("❎ Loop disabled!")
 		loops[ctx.guild.id] = "none"
+		await ctx.send("❎ Loop disabled!")
 
 
 if __name__ == "__main__":

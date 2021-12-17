@@ -51,7 +51,7 @@ Shows a list of commands.
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.0.2**.
+Current bot version is **1.0.3**.
 
 ## ⬇️ How to install the bot?
 
@@ -66,7 +66,7 @@ Go to the official python website (or just [click here](https://www.python.org/d
 After installing python, open terminal and write this 3 commands:
 ````commandline
 pip install discord.py
-pip install youtube_dl
+pip install -U yt-dlp
 pip install youtube-search-python
 pip inslall PyNaCl
 ````
