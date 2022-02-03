@@ -2,15 +2,15 @@
 <img src="http://i.piccy.info/i9/37aa9b8e20bca4ac7655a2e956e4433c/1631730793/163906/1440926/round1x.png" align="right" width="15%">
 
 # Beat
-**Beat** is a new free open source discord music bot for playing music from YouTube. **Beat** is done on [discord.py](https://discordpy.readthedocs.io).
+**Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [discord.py](https://discordpy.readthedocs.io).
 
 ## 📚 Commands
 
 ### +join
 Joins to the voice channel.
 
-### +play youtube-video-link (or search query)
-Joins to the voice channel and plays music from video link or search query.
+### +play youtube-video-link | spotify-link | search-query
+Bot joins to your voice channel and plays music from a link or search query.
 
 **Example:**
 
@@ -51,12 +51,12 @@ Shows a list of commands.
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.0.3**.
+Current bot version is **1.1**.
 
 ## ⬇️ How to install the bot?
 
-### 1. Install Python 3.9.x
-Go to the official python website (or just [click here](https://www.python.org/downloads/)) and download from there python 3.9.x
+### 1. Install Python 3.9.x or 3.10.x
+Go to the official python website (or just [click here](https://www.python.org/downloads/)) and download from there python 3.9.x or python 3.10.x
 
 **When you install python make sure this checkbox is checked:**
 
@@ -66,8 +66,10 @@ Go to the official python website (or just [click here](https://www.python.org/d
 After installing python, open terminal and write this 3 commands:
 ````commandline
 pip install discord.py
-pip install -U yt-dlp
+pip install yt-dlp
 pip install youtube-search-python
+pip install spotipy
+pip install ytmusicapi
 pip inslall PyNaCl
 ````
 
@@ -93,14 +95,19 @@ Go to YouTube.com, click on cookies in the right-up corner, click on "Current Si
 
 In other browsers, just google "How to get cookie.txt in your_browser"
 
-### 5. Change the config.py
+### 5. Create spotify application.
+
+Follow [this link](https://developer.spotify.com/dashboard/applications) and create here an application.
+After that, copy your client id and your client secret.
+
+### 6. Change the config.py
 First, you need to download [the latest release](https://github.com/Knedme/Beat/releases) of bot.
 
-Then, open config.py in any text editor and write there your token from discord developers portal and paths to files like that:
+Then, open config.py in any text editor and write there your token from discord developers portal, paths to files, spotify app client id and client secret like that:
 
-![config.py](https://i.imgur.com/gaK8Dhx.png)
+![config.py](https://i.imgur.com/gPnc0jy.png)
 
-### 6. Run the bot
+### 7. Run the bot
 Finally, open terminal in the folder where your bot is located and write:
 ```commandline
 python main.py
