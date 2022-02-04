@@ -1,6 +1,6 @@
 # Main file
 
-# Beat discord music bot v.1.1
+# Beat discord music bot v.1.1.1
 # Made by Knedme
 
 import discord
@@ -8,6 +8,7 @@ import yt_dlp
 import spotipy
 import asyncio
 from youtubesearchpython import VideosSearch
+from pytube import Playlist
 from spotipy.oauth2 import SpotifyClientCredentials
 from ytmusicapi import YTMusic
 from discord.ext import commands
@@ -195,7 +196,7 @@ async def on_ready():
 	while True:
 		await bot.change_presence(status=discord.Status.online, activity=discord.Game("+commands | +info"))
 		await asyncio.sleep(30)
-		await bot.change_presence(status=discord.Status.online, activity=discord.Game("now with Spotify! | v1.1"))
+		await bot.change_presence(status=discord.Status.online, activity=discord.Game("now with Spotify! | v1.1.1"))
 		await asyncio.sleep(30)
 
 
@@ -239,7 +240,7 @@ async def commands(ctx):
 	embed.add_field(name="+support", value="Shows support contact.", inline=False)
 	embed.add_field(name="+commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="+info", value="Information about the bot.")
-	embed.set_footer(text="v1.1")
+	embed.set_footer(text="v1.1.1")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -252,13 +253,13 @@ async def info(ctx):
 	embed = discord.Embed(title="Information about Beat", color=0x515596)
 
 	embed.add_field(name="Server count:", value=f"🔺 `{len(bot.guilds)}`", inline=False)
-	embed.add_field(name="Bot version:", value=f"🔨 `1.1`", inline=False)
+	embed.add_field(name="Bot version:", value=f"🔨 `1.1.1`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `discord.py`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
 	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="https://i.imgur.com/pSMdJGW.png")
-	embed.set_footer(text="v1.1 | Write +commands for the command list.")
+	embed.set_footer(text="v1.1.1 | Write +commands for the command list.")
 
 	await ctx.send(embed=embed)  # sending a message with embed
 
@@ -321,10 +322,12 @@ async def play(ctx, *, args=None):
 	if "https://www.youtube.com/" in args or "https://youtu.be/" in args:
 		for el in args.split():
 			if "https://www.youtube.com/" in el or "https://youtu.be/" in el:
-				if "list=" in el:
-					await ctx.send("Loading playlist...")
 				url = el
 	elif "open.spotify.com/" in args:
+		for el in args.split():
+			if "open.spotify.com/" in el:
+				args = el
+
 		# adding https if it's not in the link
 		if 'https://' not in args and 'http://' not in args:
 			args = 'https://' + args
@@ -333,7 +336,7 @@ async def play(ctx, *, args=None):
 		try:
 			spotify_link_info = get_info_from_spotify_link(args)
 		except spotipy.SpotifyException:
-			return await ctx.send('Something went wrong. If it\'s a link to a playlist, make sure it\'s open.')
+			return await ctx.send('Something went wrong. If it\'s a link to a spotify playlist, make sure it\'s open.')
 
 		# error handling
 		if spotify_link_info == 'Unknown spotify url':
@@ -353,7 +356,7 @@ async def play(ctx, *, args=None):
 			# if it's spotify playlist or album, sorting through each track, finding it on YouTube Music and
 			# adding it to the array of links from YouTube
 
-			await ctx.send('Loading playlist/album...')
+			await ctx.send('Loading tracks...')
 			for track in spotify_link_info['tracks']:
 				try:
 					event_loop = asyncio.get_event_loop()
@@ -374,14 +377,14 @@ async def play(ctx, *, args=None):
 			# if video not found, sending message
 			return await ctx.send(f'Video titled "{search_obj.data["query"]}" not found. Try another video title.')
 
-	# extracting source video/track url if it's not a spotify playlist or album
+	# extracting source video/track url if it's not a spotify playlist/album or a YouTube playlist
 	information = None
-	if len(spotify_playlist_yt_urls) == 0:
+	if len(spotify_playlist_yt_urls) == 0 and 'list=' not in url:
 		event_loop = asyncio.get_event_loop()
 		information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, url)
 
 	# if it's not a YouTube playlist or a spotify playlist/album, playing the song as usual
-	if len(spotify_playlist_yt_urls) == 0 and "_type" not in information:
+	if len(spotify_playlist_yt_urls) == 0 and 'list=' not in url:
 		src_url = information["formats"][3]["url"]
 		title = information["title"]
 
@@ -399,8 +402,8 @@ async def play(ctx, *, args=None):
 			now_playing_pos[ctx.guild.id] = 0
 			all_queues_info[ctx.guild.id] = [{"name": title, "url": url, "src_url": src_url}]
 
-	elif len(spotify_playlist_yt_urls) != 0:  # if it's spotify playlist/album, queueing it
-		# queuing first song and extracting it source url
+	elif len(spotify_playlist_yt_urls) != 0:
+		# if it's spotify playlist/album, adding to queue first track and extracting its source url
 		event_loop = asyncio.get_event_loop()
 		information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, spotify_playlist_yt_urls[0])
 		src_url = information["formats"][3]["url"]
@@ -419,38 +422,23 @@ async def play(ctx, *, args=None):
 				"name": first_track_info['name'],
 				"url": first_track_info['link'], "src_url": src_url}]
 
-		# queuing another songs and extracting them source urls
-		for track_yt_url in spotify_playlist_yt_urls:
-			if spotify_playlist_yt_urls.index(track_yt_url) != 0:
-				event_loop = asyncio.get_event_loop()
-				track_yt_information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, track_yt_url)
-				src_track_url = track_yt_information["formats"][3]["url"]
-				track_info = spotify_link_info['tracks'][spotify_playlist_yt_urls.index(track_yt_url)]
-
-				queues[ctx.guild.id].append({"url": track_info['link'], "src_url": src_track_url})
-				all_queues_info[ctx.guild.id].append(
-					{"name": track_info['name'], "url": track_info['link'], "src_url": src_track_url})
-
-	else:  # else queueing YouTube playlist
-		src_url = information["entries"][0]["formats"][3]["url"]
-		title = information["title"]
+	else:  # if it's YouTube playlist, adding to queue first video and extracting its source url
+		playlist = Playlist(url)
+		event_loop = asyncio.get_event_loop()
+		information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, playlist.video_urls[0])
+		src_url = information["formats"][3]["url"]
+		title = playlist.title
 
 		# queuing first song
 		if ctx.guild.id in queues:
-			queues[ctx.guild.id].append({"url": url, "src_url": src_url})
+			queues[ctx.guild.id].append({"url": playlist.video_urls[0], "src_url": src_url})
 			all_queues_info[ctx.guild.id].append(
-				{"name": information["entries"][0]["title"], "url": url, "src_url": src_url})
+				{"name": information["title"], "url": playlist.video_urls[0], "src_url": src_url})
 		else:
-			queues[ctx.guild.id] = [{"url": url, "src_url": src_url}]
+			queues[ctx.guild.id] = [{"url": playlist.video_urls[0], "src_url": src_url}]
 			now_playing_pos[ctx.guild.id] = 0
 			all_queues_info[ctx.guild.id] = [
-				{"name": information["entries"][0]["title"], "url": url, "src_url": src_url}]
-
-		# queuing another songs
-		for v in information["entries"]:
-			if information["entries"].index(v) != 0:
-				queues[ctx.guild.id].append({"url": url, "src_url": v["formats"][3]["url"]})
-				all_queues_info[ctx.guild.id].append({"name": v["title"], "url": url, "src_url": v["formats"][3]["url"]})
+				{"name": information["title"], "url": playlist.video_urls[0], "src_url": src_url}]
 
 	vc = ctx.voice_client
 
@@ -481,6 +469,34 @@ async def play(ctx, *, args=None):
 			color=0x515596)
 
 	await ctx.send(embed=embed)
+
+	if len(spotify_playlist_yt_urls) != 0:  # adding to queue remaining tracks of spotify playlist or album
+		for track_yt_url in spotify_playlist_yt_urls:
+			if spotify_playlist_yt_urls.index(track_yt_url) != 0:
+				event_loop = asyncio.get_event_loop()
+				track_yt_information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, track_yt_url)
+				src_track_url = track_yt_information["formats"][3]["url"]
+				track_info = spotify_link_info['tracks'][spotify_playlist_yt_urls.index(track_yt_url)]
+
+				queues[ctx.guild.id].append({"url": track_info['link'], "src_url": src_track_url})
+				all_queues_info[ctx.guild.id].append(
+					{"name": track_info['name'], "url": track_info['link'], "src_url": src_track_url})
+
+		await ctx.send('✅ Spotify playlist/album was successfully added to the queue.')
+
+	elif 'list=' in url:  # adding to queue remaining tracks of YouTube playlist
+		playlist = Playlist(url)
+
+		for i in range(len(playlist.video_urls)):
+			if i != 0:
+				event_loop = asyncio.get_event_loop()
+				information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, playlist.video_urls[i])
+				src_video_url = information["formats"][3]["url"]
+				queues[ctx.guild.id].append({"url": playlist.video_urls[i], "src_url": src_video_url})
+				all_queues_info[ctx.guild.id].append(
+					{"name": information['title'], "url": playlist.video_urls[i], "src_url": src_video_url})
+
+		await ctx.send('✅ YouTube playlist was successfully added to the queue.')
 
 
 # lofi/music command
