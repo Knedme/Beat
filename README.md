@@ -1,5 +1,5 @@
 
-<img src="http://i.piccy.info/i9/37aa9b8e20bca4ac7655a2e956e4433c/1631730793/163906/1440926/round1x.png" align="right" width="15%">
+<img src="https://i.imgur.com/qL25Z2J.png" align="right" width="15%">
 
 # Beat
 **Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [discord.py](https://discordpy.readthedocs.io).
