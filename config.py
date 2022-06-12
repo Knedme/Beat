@@ -10,8 +10,6 @@ spotify_client_id = "client-id"  # write here your spotify client id
 
 spotify_client_secret = "client-secret"  # write here your spotify client secret
 
-prefix = "+"  # command prefix
-
 ffmpeg_options = {  # ffmpeg options
 	"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
 	"options": "-vn"

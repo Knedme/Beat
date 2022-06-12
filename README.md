@@ -1,57 +1,52 @@
 
-<img src="http://i.piccy.info/i9/37aa9b8e20bca4ac7655a2e956e4433c/1631730793/163906/1440926/round1x.png" align="right" width="15%">
+<img src="https://i.imgur.com/qL25Z2J.png" align="right" width="15%">
 
 # Beat
-**Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [discord.py](https://discordpy.readthedocs.io).
+**Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [Pycord](https://docs.pycord.dev/en/master/).
 
 ## 📚 Commands
 
-### +join
+### /join
 Joins to the voice channel.
 
-### +play youtube-video-link | spotify-link | search-query
+### /play youtube-video-link | spotify-link | search-query
 Bot joins to your voice channel and plays music from a link or search query.
 
-**Example:**
-
-![Play Example](https://media0.giphy.com/media/rePkBe8XXuQoAXkfMw/giphy.gif?cid=790b761177aaeebaf4284d30d61ca900f1123669bc3ae45c&rid=giphy.gif&ct=g)
-
-### +music
+### /lofi
 Joins to the channel and plays lofi hip hop.
 
-### +leave
+### /leave
 Leaves the voice channel.
 
-### +skip
+### /skip
 Skips current song.
 
-### +pause
+### /pause
 Pauses current song.
 
-### +resume
+### /resume
 Resumes current song if it is paused.
 
-### +queue
+### /queue
 Shows current queue of songs.
 
-**Example:**
-
-<img src="https://media4.giphy.com/media/4kk1LOqn7rC19iml6v/giphy.gif?cid=790b7611afec1afb5c7e2f4e8cb1b6f8a459421fb07a694b&rid=giphy.gif&ct=g" width="35%">
-
-### +loop
+### /loop
 Enables/Disables Queue/Track loop.
 
-### +support
+### /shuffle
+Shuffles next songs in the queue.
+
+### /support
 Shows support contact.
 
-### +commands
+### /commands
 Shows a list of commands.
 
-### +info 
+### /info 
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.1.1**.
+Current bot version is **1.2.0**.
 
 ## ⬇️ How to install the bot?
 
@@ -65,7 +60,7 @@ Go to the official python website (or just [click here](https://www.python.org/d
 ### 2. Install the dependencies
 After installing python, open terminal and write this 7 commands:
 ````commandline
-pip install discord.py
+pip install -U py-cord --pre
 pip install yt-dlp
 pip install youtube-search-python
 pip install pytube
