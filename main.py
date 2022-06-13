@@ -1,6 +1,6 @@
 # Main file
 
-# Beat discord music bot v.1.2.0
+# Beat discord music bot v.1.2.1
 # Made by Knedme
 
 from youtubesearchpython.__future__ import VideosSearch
@@ -57,7 +57,7 @@ def check_new_songs(guild_id, vc):
 					executable=ffmpeg,
 					before_options=ffmpeg_options["before_options"],
 					options=ffmpeg_options["options"]
-				), after=lambda a: check_new_songs(guild_id, vc))
+				), after=lambda _: check_new_songs(guild_id, vc))
 			except discord.errors.ClientException:
 				pass
 
@@ -90,7 +90,7 @@ def check_new_songs(guild_id, vc):
 				executable=ffmpeg,
 				before_options=ffmpeg_options["before_options"],
 				options=ffmpeg_options["options"]
-			), after=lambda a: check_new_songs(guild_id, vc))
+			), after=lambda _: check_new_songs(guild_id, vc))
 		except discord.errors.ClientException:
 			return
 
@@ -204,7 +204,7 @@ def get_best_audio(information):
 	best_format = None
 	for _format in information['formats']:
 		if _format['resolution'] == 'audio only' or _format['protocol'] == 'm3u8_native':
-			if best_format is None or int(best_format['format_id']) < int(_format['format_id']):
+			if best_format is None or best_format['quality'] < _format['quality']:
 				best_format = _format
 
 	return best_format['url']
@@ -245,7 +245,7 @@ async def commands(ctx):
 	embed.add_field(name="/support", value="Shows support contact.", inline=False)
 	embed.add_field(name="/commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="/info", value="Information about the bot.")
-	embed.set_footer(text="v1.2.0")
+	embed.set_footer(text="v1.2.1")
 
 	await ctx.respond(embed=embed)  # sending a message with embed
 
@@ -257,13 +257,13 @@ async def info(ctx):
 	embed = discord.Embed(title="Information about Beat", color=0x515596)
 
 	embed.add_field(name="Server count:", value=f"🔺 `{len(bot.guilds)}`", inline=False)
-	embed.add_field(name="Bot version:", value=f"💡 `1.2.0`", inline=False)
+	embed.add_field(name="Bot version:", value=f"💡 `1.2.1`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `Pycord`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
 	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="https://i.imgur.com/pSMdJGW.png")
-	embed.set_footer(text="v1.2.0 | Write +commands for the command list.")
+	embed.set_footer(text="v1.2.1 | Write +commands for the command list.")
 
 	await ctx.respond(embed=embed)  # sending a message with embed
 
@@ -455,7 +455,7 @@ async def play(ctx, query: discord.Option(str, 'Link or search query.')):
 			before_options=ffmpeg_options["before_options"],
 			options=ffmpeg_options["options"]
 			# calling the check_new_songs function after playing the current music
-		), after=lambda a: check_new_songs(ctx.guild.id, vc))
+		), after=lambda _: check_new_songs(ctx.guild.id, vc))
 	except discord.errors.ClientException:
 		pass
 
