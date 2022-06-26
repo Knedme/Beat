@@ -1,6 +1,6 @@
 # Main file
 
-# Beat discord music bot v.1.2.1
+# Beat discord music bot v.1.2.2
 # Made by Knedme
 
 from youtubesearchpython.__future__ import VideosSearch
@@ -97,10 +97,7 @@ def check_new_songs(guild_id, vc):
 
 # this function extracts all info from video url
 def extract_info(url):
-	try:
-		return yt_dlp.YoutubeDL({"format": "bestaudio", "cookiefile": cookies}).extract_info(url, download=False)
-	except yt_dlp.utils.ExtractorError and yt_dlp.utils.DownloadError:  # if there is an error, changing format
-		return yt_dlp.YoutubeDL({"format": "95", "cookiefile": cookies}).extract_info(url, download=False)
+	return yt_dlp.YoutubeDL({"format": "bestaudio/best", "cookiefile": cookies}).extract_info(url, download=False)
 
 
 # this function finds YouTube Music track from search query and returns YouTube link to this track
@@ -199,17 +196,6 @@ def check_yt_url(url):
 	return request.status_code == 200
 
 
-# this function gets the source url with the best sound quality from the yt-dlp result
-def get_best_audio(information):
-	best_format = None
-	for _format in information['formats']:
-		if _format['resolution'] == 'audio only' or _format['protocol'] == 'm3u8_native':
-			if best_format is None or best_format['quality'] < _format['quality']:
-				best_format = _format
-
-	return best_format['url']
-
-
 @bot.event
 async def on_ready():
 	print("\n🎵 Beat has been launched!")
@@ -245,7 +231,7 @@ async def commands(ctx):
 	embed.add_field(name="/support", value="Shows support contact.", inline=False)
 	embed.add_field(name="/commands", value="Shows a list of commands.", inline=False)
 	embed.add_field(name="/info", value="Information about the bot.")
-	embed.set_footer(text="v1.2.1")
+	embed.set_footer(text="v1.2.2")
 
 	await ctx.respond(embed=embed)  # sending a message with embed
 
@@ -257,13 +243,13 @@ async def info(ctx):
 	embed = discord.Embed(title="Information about Beat", color=0x515596)
 
 	embed.add_field(name="Server count:", value=f"🔺 `{len(bot.guilds)}`", inline=False)
-	embed.add_field(name="Bot version:", value=f"💡 `1.2.1`", inline=False)
+	embed.add_field(name="Bot version:", value=f"💡 `1.2.2`", inline=False)
 	embed.add_field(name="The bot is written on:", value=f"🐍 `Pycord`", inline=False)
 	embed.add_field(name="Bot created by:", value="🔶 `Knedme`", inline=False)
 	embed.add_field(name="GitHub repository:", value="📕 [Click Here](https://github.com/Knedme/Beat)")
 
 	embed.set_thumbnail(url="https://i.imgur.com/pSMdJGW.png")
-	embed.set_footer(text="v1.2.1 | Write +commands for the command list.")
+	embed.set_footer(text="v1.2.2 | Write +commands for the command list.")
 
 	await ctx.respond(embed=embed)  # sending a message with embed
 
@@ -391,7 +377,7 @@ async def play(ctx, query: discord.Option(str, 'Link or search query.')):
 	if len(spotify_playlist_yt_urls) == 0 and 'list=' not in url:
 		event_loop = asyncio.get_event_loop()
 		information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, url)
-		src_url = get_best_audio(information)
+		src_url = information['url']
 		title = information["title"]
 
 		# changing title and link if it is spotify track
@@ -412,7 +398,7 @@ async def play(ctx, query: discord.Option(str, 'Link or search query.')):
 		# if it's spotify playlist/album, adding to queue first track and extracting its source url
 		event_loop = asyncio.get_event_loop()
 		information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, spotify_playlist_yt_urls[0])
-		src_url = get_best_audio(information)
+		src_url = information['url']
 		first_track_info = spotify_link_info['tracks'][0]
 		title = spotify_link_info['name']
 		url = spotify_link_info['link']
@@ -432,7 +418,7 @@ async def play(ctx, query: discord.Option(str, 'Link or search query.')):
 		playlist = Playlist(url)
 		event_loop = asyncio.get_event_loop()
 		information = await event_loop.run_in_executor(ThreadPoolExecutor(), extract_info, playlist.video_urls[0])
-		src_url = get_best_audio(information)
+		src_url = information['url']
 		title = playlist.title
 
 		# queuing first song
@@ -590,8 +576,8 @@ async def queue(ctx):
 		queue_info = all_queues_info[ctx.guild.id]
 		arrays = []
 		while len(queue_info) > 10:
-			pice = queue_info[:10]
-			arrays.append(pice)
+			piece = queue_info[:10]
+			arrays.append(piece)
 			queue_info = queue_info[10:]
 		arrays.append(queue_info)
 		queue_info = arrays
