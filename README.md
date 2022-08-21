@@ -1,5 +1,5 @@
 
-<img src="https://i.imgur.com/qL25Z2J.png" alt="beat-logo" width="15%" style="float: right">
+<img src="https://i.imgur.com/qL25Z2J.png" alt="beat-logo" width="15%" align="right">
 
 # Beat
 **Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [Pycord](https://docs.pycord.dev/en/master/).
