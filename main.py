@@ -220,7 +220,7 @@ async def join(ctx):
 
     channel = ctx.author.voice.channel
 
-    if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
+    if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to it
         await channel.connect()
     else:  # else, just moving to ctx author voice channel
         await ctx.voice_client.move_to(channel)
@@ -241,14 +241,14 @@ async def play(ctx, query: discord.Option(str, 'Link or search query.')):
         return await ctx.respond(f'{ctx.author.mention}, You have to be connected to a voice channel.')
 
     channel = ctx.author.voice.channel
-    if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to a voice channel
+    if ctx.voice_client is None:  # if bot is not connected to a voice channel, connecting to it
         await channel.connect()
     else:  # else, just moving to ctx author voice channel
         await ctx.voice_client.move_to(channel)
 
     await ctx.guild.change_voice_state(channel=channel, self_mute=False, self_deaf=True)  # self deaf
 
-    src_query = query  # saving source search query
+    src_query = query  # saving source query
     url = ''
     spotify_link_info = None
 
@@ -296,7 +296,7 @@ async def play(ctx, query: discord.Option(str, 'Link or search query.')):
             url = spotify_link_info['yt_url']
 
         else:
-            # if it's Spotify playlist or album, sorting through each track and getting track's YouTube url
+            # if it's Spotify playlist or album, sorting through each track and getting YouTube url of the track
 
             # getting all tracks
             next_link = spotify_link_info['tracks']['next']
