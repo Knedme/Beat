@@ -1,5 +1,5 @@
 
-<img src="https://i.imgur.com/qL25Z2J.png" align="right" width="15%">
+<img src="https://i.imgur.com/qL25Z2J.png" alt="beat-logo" width="15%" style="float: right">
 
 # Beat
 **Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [Pycord](https://docs.pycord.dev/en/master/).
@@ -50,7 +50,7 @@ Shows a list of commands.
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.2.2**.
+Current bot version is **1.2.3**.
 
 ## ⬇️ How to install the bot?
 
@@ -61,12 +61,12 @@ Go to the official python website (or just [click here](https://www.python.org/d
 After installing python, open terminal and write this 7 commands:
 ````commandline
 pip install -U py-cord --pre
+pip install PyNaCl
 pip install yt-dlp
 pip install youtube-search-python
 pip install pytube
-pip install spotipy
+pip install async-spotify
 pip install ytmusicapi
-pip install PyNaCl
 ````
 
 ### 3. Install the FFmpeg
