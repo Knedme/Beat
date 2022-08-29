@@ -551,7 +551,7 @@ async def leave(ctx):
     if ctx.guild.id in all_queues_info:
         del all_queues_info[ctx.guild.id]
     if ctx.guild.id in now_playing_pos:
-        del now_playing_pos[ctx.ctx.guild.id]
+        del now_playing_pos[ctx.guild.id]
     if ctx.guild.id in adding_to_queue_ids:
         adding_to_queue_ids.remove(ctx.guild.id)
     if ctx.guild.id in loops:
