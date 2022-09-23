@@ -2,7 +2,7 @@
 <img src="https://i.imgur.com/qL25Z2J.png" alt="beat-logo" width="15%" align="right">
 
 # Beat
-**Beat** is a new free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [Pycord](https://docs.pycord.dev/en/master/).
+**Beat** is a free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [Pycord](https://docs.pycord.dev/en/master/).
 
 ## 🔶 Bot invitation
 
@@ -14,7 +14,7 @@ If you want to invite the bot, [click here](https://discord.com/api/oauth2/autho
 Joins to the voice channel.
 
 ### /play youtube-video-link | spotify-link | search-query
-Bot joins to your voice channel and plays music from a link or search query.
+The bot joins to your voice channel and plays music from a link or search query.
 
 ### /lofi
 Joins to the channel and plays lofi hip hop.
@@ -50,12 +50,12 @@ Shows a list of commands.
 Shows information about the bot.
 
 ## 🌌 Current Version
-Current bot version is **1.2.3**.
+Current bot version is **1.2.4**.
 
 ## ⬇️ How to install the bot?
 
-### 1. Install Python 3.9.x or 3.10.x
-Go to the official python website (or just [click here](https://www.python.org/downloads/)) and download from there python 3.9.x or python 3.10.x
+### 1. Install Python 3.9.x or higher
+Go to the official python website (or just [click here](https://www.python.org/downloads/)) and download from there python 3.9.x or higher
 
 ### 2. Install the dependencies
 After installing python, open terminal and write this 7 commands:
@@ -69,8 +69,7 @@ pip install async-spotify
 pip install ytmusicapi
 ````
 
-### 3. Install the FFmpeg
-To install the FFmpeg, [click here](https://github.com/BtbN/FFmpeg-Builds/releases) and choose the version you need. Then, unzip the archive in a folder convenient for you.
+### 3. Install the FFmpeg for your OS
 
 ### 4. Get cookies.txt file
 Before getting cookies.txt, make sure that you are logged in YouTube.
@@ -112,4 +111,4 @@ python main.py
 Congratulations, you have successfully installed the bot and launched it.
 
 ## 🆘 Support
-If you find a bug, or you have a question please write here: Knedme#3143 or Knedme@yandex.ru
+If you find a bug, or you have a question please write here: Knedme@yandex.com
