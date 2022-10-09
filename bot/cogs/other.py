@@ -11,7 +11,7 @@ class __MainOtherCog(Cog):
     @Cog.listener()
     async def on_ready(self) -> None:
         await SpotifyWrapper.init()
-        print(f'🎵 Beat v{Config.BOT_VERSION} launched!')
+        print(f'🎵 {Config.BOT_NAME} v{Config.BOT_VERSION} launched!')
 
 
 def register_other_cogs(bot: Bot) -> None:
