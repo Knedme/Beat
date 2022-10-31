@@ -15,16 +15,18 @@ class QueueCommandsCog(Cog):
     async def now_playing_command(self, interaction: Interaction) -> None:
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None:
-            await interaction.send('Nothing is playing right now.')
+            await interaction.send(embed=Embed(title='🎵 Current song',
+                                               description='Nothing is playing right now.', color=Config.EMBED_COLOR))
             return
 
         try:
-            cur_song_name = play_data.queue[play_data.cur_song_pos].name
+            cur_song = play_data.queue[play_data.cur_song_pos]
         except IndexError:
             await interaction.send('An unexpected error has occurred. Try using the command again.')
             return
 
-        await interaction.send(f'🎵 Current song: **`{cur_song_name}`**')
+        await interaction.send(embed=Embed(title='🎵 Current song',
+                                           description=f'[{cur_song.name}]({cur_song.url})', color=Config.EMBED_COLOR))
 
     @slash_command(name='shuffle', description='Shuffles next songs in the queue.', dm_permission=False)
     async def shuffle_command(self, interaction: Interaction) -> None:
