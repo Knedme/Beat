@@ -13,4 +13,4 @@ def start_bot():
     register_all_cogs(bot)
 
     bot.run(Env.TOKEN)
-    run(SpotifyWrapper.close())  # closing the SpotifyWrapper when the bot is stopped
+    run(SpotifyWrapper.close())  # closing the SpotifyWrapper when the bot has stopped

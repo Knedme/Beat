@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Union, List
+from typing import Union
 from async_spotify import SpotifyApiClient
 from async_spotify.authentification.authorization_flows import ClientCredentialsFlow
 from async_spotify.spotify_errors import SpotifyAPIError

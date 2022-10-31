@@ -74,10 +74,6 @@ class ControlCommandsCog(Cog):
             await interaction.send('You are in the wrong channel.')
             return
 
-        # removing guild play data
-        if GuildPlayData.get_play_data(interaction.guild_id) is not None:
-            GuildPlayData.remove_play_data(interaction.guild_id)
-
         await interaction.guild.voice_client.disconnect()
         await interaction.send('✅ Successfully disconnected.')
 

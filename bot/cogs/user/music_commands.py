@@ -1,5 +1,5 @@
 from nextcord import slash_command, Interaction, VoiceChannel, VoiceClient, SlashOption, FFmpegPCMAudio,\
-    ClientException, Embed
+    ClientException, Embed, Member, VoiceState
 from nextcord.ext.commands import Cog, Bot
 from typing import Union
 
@@ -35,9 +35,7 @@ class MusicCommandsCog(Cog):
     def __check_new_songs(cls, vc: VoiceClient) -> None:
         """Plays the remaining songs if there is any and loops the track or queue."""
 
-        # if the bot has been disconnected from a voice channel, deleting play data
         if not vc.is_connected():
-            GuildPlayData.remove_play_data(vc.guild.id)
             return
 
         play_data = GuildPlayData.get_play_data(vc.guild.id)
@@ -78,6 +76,14 @@ class MusicCommandsCog(Cog):
 
         await interaction.guild.change_voice_state(channel=channel, self_mute=False, self_deaf=True)  # self deaf
         return channel
+
+    @Cog.listener()
+    async def on_voice_state_update(self, member: Member, _, after: VoiceState) -> None:
+        """Deletes play data when the bot has disconnected from the voice channel."""
+
+        if member.id == self.bot.application_id and after.channel is None\
+                and GuildPlayData.get_play_data(member.guild.id) is not None:
+            GuildPlayData.remove_play_data(member.guild.id)
 
     @slash_command(name='join', description='The bot joins to your voice channel.', dm_permission=False)
     async def join_command(self, interaction: Interaction) -> None:
