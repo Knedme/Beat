@@ -58,7 +58,7 @@ Shows information about the bot.
 
 ## ⬇️ Getting started
 
-### 1. Install Python 3.11.1
+### 1. Install Python 3.11.x
 
 ### 2. Clone this repo
 Install Git and run this command in the terminal:
