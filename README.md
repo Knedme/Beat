@@ -10,7 +10,7 @@ Bot structure from: https://github.com/BaggerFast/NextcordTemplate
 If you want to invite the bot, use [this](https://discord.com/api/oauth2/authorize?client_id=883986382719189033&permissions=414526590016&scope=bot%20applications.commands) or [this link](https://discord.com/api/oauth2/authorize?client_id=1028606605593432134&permissions=414526590016&scope=bot%20applications.commands).
 
 ## 🌌 Current Version
-Current bot version is **1.3.2**.
+Current bot version is **1.3.3**.
 
 ## 📚 Commands
 
@@ -58,7 +58,7 @@ Shows information about the bot.
 
 ## ⬇️ Getting started
 
-### 1. Install Python 3.11.x
+### 1. Install Python 3.11.2
 
 ### 2. Clone this repo
 Install Git and run this command in the terminal:
@@ -94,4 +94,4 @@ python run.py
 ```
 
 ## 🆘 Support
-If you find a bug, or you have a question please write here: `Knedme@yandex.com`
+If you find a bug, or you have a question please write here: `supknedme@yandex.com`

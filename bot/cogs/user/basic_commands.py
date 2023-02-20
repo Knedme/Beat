@@ -50,5 +50,5 @@ class BasicCommandsCog(Cog):
     async def support_command(self, interaction: Interaction) -> None:
         await interaction.send(embed=Embed(
             title='Support',
-            description='If you have any problems, please write here: `Knedme@yandex.com`',
+            description='If you have any problems, please write here: `supknedme@yandex.com`',
             color=Config.EMBED_COLOR))
