@@ -112,7 +112,7 @@ class MusicCommandsCog(Cog):
         song_obj, original_url = None, None
         if 'open.spotify.com' not in query.lower():
             if 'youtube.com' in query.lower() or 'youtu.be' in query.lower():
-                for el in query.split():  # getting a url from the query
+                for el in query.split():  # getting an url from the query
                     if 'youtube.com' in el.lower() or 'youtu.be' in el.lower():
                         original_url = el
                         if not await YouTubeWrapper.is_valid_url(original_url):  # YouTube url validation

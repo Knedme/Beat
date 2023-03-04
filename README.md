@@ -10,7 +10,7 @@ Bot structure from: https://github.com/BaggerFast/NextcordTemplate
 If you want to invite the bot, use [this](https://discord.com/api/oauth2/authorize?client_id=883986382719189033&permissions=414526590016&scope=bot%20applications.commands) or [this link](https://discord.com/api/oauth2/authorize?client_id=1028606605593432134&permissions=414526590016&scope=bot%20applications.commands).
 
 ## 🌌 Current Version
-Current bot version is **1.3.3**.
+Current bot version is **1.3.4**.
 
 ## 📚 Commands
 
@@ -74,7 +74,7 @@ pip install -r requirements.txt
 
 ### 4. Install the FFmpeg on your OS
 
-### 5. Get cookies.txt file
+### 5. Get cookies.txt file (not necessary, but recommended)
 To do this, just google something like `How to get cookies.txt file in <your-browser-name>`
 
 ### 6. Create a Spotify application
@@ -85,7 +85,7 @@ Follow [this link](https://developer.spotify.com/dashboard/applications) and cre
 Set the environment variables `TOKEN`, `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
 
 ### 8. Change the bot config
-Open `<beat-folder>/bot/misc/config.py` file in any text editor and define there path to FFmpeg executable file and cookies.txt file path.
+Open `<beat-folder>/bot/misc/config.py` file in any text editor and define there FFmpeg executable file path and cookies.txt file path (if you have one).
 
 ### 9. Run the bot
 Open terminal in the cloned Beat folder and run the bot:

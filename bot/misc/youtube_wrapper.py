@@ -48,11 +48,7 @@ class YouTubeWrapper(ABC):
 
         return await get_event_loop().run_in_executor(
             ThreadPoolExecutor(),
-            YoutubeDL({
-                'format': 'bestaudio/best',
-                'ignoreerrors': True,
-                'cookiefile': Config.COOKIES_FILE_PATH
-            }).extract_info, url, False)
+            YoutubeDL(Config.YDL_OPTIONS).extract_info, url, False)
 
     @classmethod
     async def video(cls, url: str) -> SongObject:
