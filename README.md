@@ -93,5 +93,16 @@ Open terminal in the cloned Beat folder and run the bot:
 python run.py
 ```
 
+## 📦 Docker
+
+You can also run **Beat** using Docker:
+```commandline
+sudo docker build -t beat:version /your-beat-folder
+sudo docker run -d -v /path-to-changed-config:/beat/bot/misc/config.py \
+-v /path-to-cookies:/path-to-cookies-in-config -e TOKEN=YOUR_TOKEN \
+-e SPOTIFY_CLIENT_ID=YOUR_CLIENT_ID \
+-e SPOTIFY_CLIENT_SECRET=YOUR_CLIENT_SECRET
+```
+
 ## 🆘 Support
 If you find a bug, or you have a question please write here: `supknedme@yandex.com`
