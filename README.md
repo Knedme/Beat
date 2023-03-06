@@ -101,7 +101,7 @@ sudo docker build -t beat:version /your-beat-folder
 sudo docker run -d -v /path-to-changed-config:/beat/bot/misc/config.py \
 -v /path-to-cookies:/path-to-cookies-in-config -e TOKEN=YOUR_TOKEN \
 -e SPOTIFY_CLIENT_ID=YOUR_CLIENT_ID \
--e SPOTIFY_CLIENT_SECRET=YOUR_CLIENT_SECRET
+-e SPOTIFY_CLIENT_SECRET=YOUR_CLIENT_SECRET beat:version
 ```
 
 ## 🆘 Support
