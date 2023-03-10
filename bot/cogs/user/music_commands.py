@@ -65,10 +65,21 @@ class MusicCommandsCog(Cog):
         cls.__play_music(vc, src_url)
 
     @staticmethod
-    async def __join_user_channel(interaction: Interaction) -> VoiceChannel:
+    async def __join_user_channel(interaction: Interaction) -> Union[VoiceChannel, None]:
         """Joins to the voice channel where the user is located."""
 
         channel = interaction.user.voice.channel
+
+        permissions = channel.permissions_for(interaction.guild.me)
+        if not permissions.connect:
+            await interaction.send(
+                f'{interaction.user.mention}, I don\'t have permission to connect to your voice channel.')
+            return
+        if not permissions.speak:
+            await interaction.send(
+                f'{interaction.user.mention}, I don\'t have permission to speak in your voice channel.')
+            return
+
         if interaction.guild.voice_client is None:
             await channel.connect()
         else:
@@ -107,6 +118,9 @@ class MusicCommandsCog(Cog):
             return
 
         channel = await self.__join_user_channel(interaction)
+        if channel is None:
+            return
+
         vc = interaction.guild.voice_client
 
         song_obj, original_url = None, None
