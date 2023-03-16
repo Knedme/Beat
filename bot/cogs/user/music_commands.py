@@ -1,4 +1,4 @@
-from nextcord import slash_command, Interaction, VoiceChannel, VoiceClient, SlashOption, FFmpegPCMAudio,\
+from nextcord import slash_command, Interaction, VoiceChannel, VoiceClient, SlashOption, FFmpegOpusAudio,\
     ClientException, Embed, Member, VoiceState
 from nextcord.ext.commands import Cog, Bot
 from typing import Union
@@ -21,7 +21,7 @@ class MusicCommandsCog(Cog):
             return
 
         try:
-            vc.play(FFmpegPCMAudio(
+            vc.play(FFmpegOpusAudio(
                 src_url,
                 executable=Config.FFMPEG_PATH,
                 before_options=Config.FFMPEG_OPTIONS['before_options'],
@@ -103,6 +103,9 @@ class MusicCommandsCog(Cog):
             return
 
         channel = await self.__join_user_channel(interaction)
+        if channel is None:
+            return
+
         await interaction.send(f'✅ Successfully joined to `{channel}`')
 
     @slash_command(
@@ -190,7 +193,8 @@ class MusicCommandsCog(Cog):
         if 'playlist' in song_obj.type_:
             play_data.playlists_being_added += 1
 
-        self.__play_music(vc, song_obj.src_url)
+        if not vc.is_paused():
+            self.__play_music(vc, song_obj.src_url)
 
         display_name = song_obj.name
         display_url = song_obj.url

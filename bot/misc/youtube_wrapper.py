@@ -57,7 +57,7 @@ class YouTubeWrapper(ABC):
         video_info = await cls.extract_video_info(url)
         if video_info is None:  # if an error occurs, return an empty SongObject
             return SongObject('youtube_video', None, None, None)
-        return SongObject('youtube_video', video_info['title'], video_info['original_url'], video_info['url'])
+        return SongObject('youtube_video', video_info['fulltitle'], video_info['original_url'], video_info['url'])
 
     @classmethod
     async def playlist(cls, url: str) -> SongObject:
