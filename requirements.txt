@@ -1,4 +1,4 @@
-nextcord~=2.3.3
+nextcord~=2.4.1
 aiohttp~=3.8.4
 asyncio~=3.4.3
 pytube~=12.1.2
