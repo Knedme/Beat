@@ -7,7 +7,7 @@ class Config(ABC):
     COOKIES_FILE_PATH: Final = r'Define the cookies file path here'
 
     BOT_NAME: Final = 'Beat'
-    BOT_VERSION: Final = '1.3.6'
+    BOT_VERSION: Final = '1.3.7'
     BOT_LOGO_URL: Final = 'https://raw.githubusercontent.com/Knedme/Beat/master/logo/1x.png'
     EMBED_COLOR: Final = 0x515596  # colour of the embeds
 

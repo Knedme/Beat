@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Union
 from async_spotify import SpotifyApiClient
+from async_spotify.authentification import SpotifyAuthorisationToken
 from async_spotify.authentification.authorization_flows import ClientCredentialsFlow
 from async_spotify.spotify_errors import SpotifyAPIError
 
@@ -10,11 +11,18 @@ from bot.misc import Env, SongObject, YouTubeWrapper
 class SpotifyWrapper(ABC):
     __spotify_client: Union[None, SpotifyApiClient] = None  # async_spotify client
 
+    class __RenewToken:
+        """Renew the access token every time it expires."""
+
+        async def __call__(self, spotify_api_client: SpotifyApiClient) -> SpotifyAuthorisationToken:
+            return await spotify_api_client.get_auth_token_with_client_credentials()
+
     @classmethod
     async def init(cls) -> None:
         """Initializes the Spotify client."""
         cls.__spotify_client = SpotifyApiClient(authorization_flow=ClientCredentialsFlow(
-            application_id=Env.SPOTIFY_CLIENT_ID, application_secret=Env.SPOTIFY_CLIENT_SECRET))
+            application_id=Env.SPOTIFY_CLIENT_ID, application_secret=Env.SPOTIFY_CLIENT_SECRET),
+            hold_authentication=True, token_renew_instance=cls.__RenewToken())
         await cls.__spotify_client.get_auth_token_with_client_credentials()
         await cls.__spotify_client.create_new_client()
 
