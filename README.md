@@ -10,14 +10,14 @@ Bot structure from: https://github.com/BaggerFast/NextcordTemplate
 If you want to invite the bot, use [this](https://discord.com/api/oauth2/authorize?client_id=883986382719189033&permissions=414526590016&scope=bot%20applications.commands) or [this link](https://discord.com/api/oauth2/authorize?client_id=1028606605593432134&permissions=414526590016&scope=bot%20applications.commands).
 
 ## 🌌 Current Version
-Current bot version is **1.3.7**.
+Current bot version is **1.4.0**.
 
 ## 📚 Commands
 
 ### /join
 The bot joins to your voice channel.
 
-### /play youtube-video-link | spotify-link | search-query
+### /play _youtube-video-link | spotify-link | search-query_
 The bot joins to your voice channel and plays music from a link or search query.
 
 ### /lofi
@@ -26,8 +26,14 @@ The bot joins to your channel and plays lofi.
 ### /leave
 Leave the voice channel.
 
+### /clear
+Clears the entire queue and also disables all loops.
+
 ### /skip
 Skips current song.
+
+### /skip-to _position_
+Skips to a specific position in the queue.
 
 ### /pause
 Pauses current song.
@@ -42,10 +48,28 @@ Shows current queue.
 Shows what song is playing now.
 
 ### /loop
-Enables/Disables Queue/Track loop.
+Enables/Disables current track loop.
+
+### /loop-queue
+Enables/Disables queue loop.
+
+### /replay
+Resets the progress of the current playing song.
+
+### /replay-queue
+Resets the progress of the current queue.
+
+### /remove _position_
+Removes the specified song from the queue.
+
+### /move _pos-from_ _pos-to_
+Moves the specified song to another position in the queue.
 
 ### /shuffle
-Shuffles next songs in the queue.
+Shuffles the entire queue.
+
+### /latency
+Checks bot's response time to Discord.
 
 ### /support
 Shows support contact.

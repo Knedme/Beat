@@ -1,4 +1,3 @@
-from enum import Enum
 from dataclasses import dataclass
 from typing import Union, List, Dict
 
@@ -15,12 +14,6 @@ class SongObject:
     playlist_remaining_urls: Union[None, List[str]] = None
 
 
-class LoopState(Enum):
-    NONE = 0
-    QUEUE = 1
-    TRACK = 2
-
-
 @dataclass
 class QueueItem:
     name: str
@@ -33,8 +26,10 @@ class _PlayData:
 
     def __init__(self):
         self.queue = []
-        self.cur_song_pos = 0
-        self.loop = LoopState.NONE
+        self.cur_song_idx = 0
+        self.target_song_idx = None
+        self.loop = False
+        self.loop_queue = False
         self.playlists_being_added = 0
         self.waiting_for_next_song = False
 

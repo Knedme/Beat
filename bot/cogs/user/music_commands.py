@@ -3,7 +3,7 @@ from nextcord import slash_command, Interaction, VoiceChannel, VoiceClient, Slas
 from nextcord.ext.commands import Cog, Bot
 from typing import Union
 
-from bot.misc import Config, YouTubeWrapper, SpotifyWrapper, GuildPlayData, QueueItem, LoopState
+from bot.misc import Config, YouTubeWrapper, SpotifyWrapper, GuildPlayData, QueueItem
 
 
 class MusicCommandsCog(Cog):
@@ -42,24 +42,31 @@ class MusicCommandsCog(Cog):
         if play_data is None:
             return
 
-        if play_data.loop == LoopState.TRACK:  # track loop
-            cls.__play_music(vc, play_data.queue[play_data.cur_song_pos].src_url)
-            return
-
-        try:  # trying to get the next song
-            src_url = play_data.queue[play_data.cur_song_pos+1].src_url
-            play_data.cur_song_pos += 1
+        try:
+            if play_data.target_song_idx is not None:  # the ability to play a song in a given position
+                play_data.cur_song_idx = play_data.target_song_idx
+                play_data.target_song_idx = None
+                src_url = play_data.queue[play_data.cur_song_idx].src_url
+            else:
+                if play_data.loop:  # track loop
+                    src_url = play_data.queue[play_data.cur_song_idx].src_url
+                else:
+                    # getting the next song
+                    src_url = play_data.queue[play_data.cur_song_idx + 1].src_url
+                    play_data.cur_song_idx += 1
         except IndexError:
+            # if the index is out of range, it is the end of the queue
+
             if play_data.playlists_being_added:
                 play_data.waiting_for_next_song = True
                 return
 
-            if play_data.loop != LoopState.QUEUE:
+            if not play_data.loop_queue:
                 GuildPlayData.remove_play_data(vc.guild.id)
                 return
 
             # queue loop
-            play_data.cur_song_pos = 0
+            play_data.cur_song_idx = 0
             src_url = play_data.queue[0].src_url
 
         cls.__play_music(vc, src_url)
@@ -233,7 +240,7 @@ class MusicCommandsCog(Cog):
                 play_data.queue.append(QueueItem(video.name, video.url, video.src_url))
                 if play_data.waiting_for_next_song:  # if the bot is waiting for next song, playing it
                     play_data.waiting_for_next_song = False
-                    play_data.cur_song_pos += 1
+                    play_data.cur_song_idx += 1
                     self.__play_music(vc, video.src_url)
 
             play_data.playlists_being_added -= 1
@@ -256,7 +263,7 @@ class MusicCommandsCog(Cog):
                 play_data.queue.append(QueueItem(track.name, track.url, track.src_url))
                 if play_data.waiting_for_next_song:
                     play_data.waiting_for_next_song = False
-                    play_data.cur_song_pos += 1
+                    play_data.cur_song_idx += 1
                     self.__play_music(vc, track.src_url)
 
             play_data.playlists_being_added -= 1
