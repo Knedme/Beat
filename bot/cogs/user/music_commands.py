@@ -131,8 +131,6 @@ class MusicCommandsCog(Cog):
         if channel is None:
             return
 
-        vc = interaction.guild.voice_client
-
         song_obj, original_url = None, None
         if 'open.spotify.com' not in query.lower():
             if 'youtube.com' in query.lower() or 'youtu.be' in query.lower():
@@ -191,6 +189,12 @@ class MusicCommandsCog(Cog):
             if song_obj is None or song_obj.name is None:
                 await interaction.send('Unknown Spotify url.')
                 return
+
+        # if the bot has been disconnected by this moment, stop the command execution
+        vc = interaction.guild.voice_client
+        if vc is None:
+            await interaction.send('The bot was disconnected from the voice channel.')
+            return
 
         # adding song to queue
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
