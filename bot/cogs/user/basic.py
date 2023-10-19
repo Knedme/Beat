@@ -5,13 +5,13 @@ from math import isnan, isinf
 from bot.misc import Config
 
 
-class BasicCommandsCog(Cog):
+class BasicCog(Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
 
     @slash_command(name='info', description='Information about the bot.')
-    async def info_command(self, interaction: Interaction) -> None:
+    async def info_command(self, interaction: Interaction):
         embed = Embed(title=f'Information about {Config.BOT_NAME}', color=Config.EMBED_COLOR)
         embed.add_field(name='Server count:', value=f'🔺 `{len(self.bot.guilds)}`', inline=False)
         embed.add_field(name='Bot version:', value=f'✨ `{Config.BOT_VERSION}`', inline=False)
@@ -23,7 +23,7 @@ class BasicCommandsCog(Cog):
         await interaction.send(embed=embed)
 
     @slash_command(name='commands', description='Shows a list of commands')
-    async def commands_command(self, interaction: Interaction) -> None:
+    async def commands_command(self, interaction: Interaction):
         embed = Embed(
             title=f'{Config.BOT_NAME} commands',
             color=Config.EMBED_COLOR)
@@ -47,31 +47,22 @@ class BasicCommandsCog(Cog):
         embed.add_field(name='/replay-queue', value='Resets the progress of the current queue.', inline=False)
         embed.add_field(name='/remove _position_', value='Removes the specified song from the queue.')
         embed.add_field(name='/move _pos-from_ _pos-to_',
-                        value='Moves the specified song to another position in the queue.')
+                        value='Moves the specified song to another position in the queue.', inline=False)
         embed.add_field(name='/shuffle', value='Shuffles the entire queue.', inline=False)
         embed.add_field(name='/latency', value='Checks bot\'s response time to Discord.', inline=False)
-        embed.add_field(name='/support', value='Shows support contact.', inline=False)
         embed.add_field(name='/commands', value='Shows a list of commands.', inline=False)
         embed.add_field(name='/info', value='Shows information about the bot.')
         embed.set_footer(text=f'v{Config.BOT_VERSION}')
         await interaction.send(embed=embed)
 
-    @slash_command(name='support', description='Shows support contact.')
-    async def support_command(self, interaction: Interaction) -> None:
-        await interaction.send(embed=Embed(
-            title='Support',
-            description='If you have any problems, please write here: `supknedme@yandex.com`',
-            color=Config.EMBED_COLOR))
-
     @slash_command(
         name='latency',
         description='Checks bot\'s response time to Discord.',
         dm_permission=False)
-    async def latency_command(self, interaction: Interaction) -> None:
+    async def latency_command(self, interaction: Interaction):
         bot_latency = self.bot.latency
         if isnan(bot_latency):  # bot latency can be NaN
-            await interaction.send('Couldn\'t get the latency.')
-            return
+            return await interaction.send('Couldn\'t get the latency.')
         info = f'Bot latency is: **`{round(bot_latency * 1000)}ms`**'
 
         vc = interaction.guild.voice_client

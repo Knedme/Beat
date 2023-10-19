@@ -1,6 +1,6 @@
 from nextcord.ext.commands import Bot, Cog
 
-from bot.misc import Config, SpotifyWrapper
+from bot.misc import Config, Spotify
 
 
 class __MainOtherCog(Cog):
@@ -10,7 +10,7 @@ class __MainOtherCog(Cog):
 
     @Cog.listener()
     async def on_ready(self) -> None:
-        await SpotifyWrapper.init()
+        await Spotify.init()
         print(f'🎵 {Config.BOT_NAME} v{Config.BOT_VERSION} launched!')
 
 

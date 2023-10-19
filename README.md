@@ -6,11 +6,8 @@
 
 Bot structure from: https://github.com/BaggerFast/NextcordTemplate
 
-## 🔶 Bot invitation
-If you want to invite the bot, use [this](https://discord.com/api/oauth2/authorize?client_id=883986382719189033&permissions=414526590016&scope=bot%20applications.commands) or [this link](https://discord.com/api/oauth2/authorize?client_id=1028606605593432134&permissions=414526590016&scope=bot%20applications.commands).
-
 ## 🌌 Current Version
-Current bot version is **1.4.1**.
+Current bot version is **1.4.2**.
 
 ## 📚 Commands
 
@@ -71,9 +68,6 @@ Shuffles the entire queue.
 ### /latency
 Checks bot's response time to Discord.
 
-### /support
-Shows support contact.
-
 ### /commands
 Shows a list of commands.
 
@@ -82,7 +76,7 @@ Shows information about the bot.
 
 ## ⬇️ Getting started
 
-### 1. Install Python 3.11.2
+### 1. Install Python 3.11.6
 
 ### 2. Clone this repo
 Install Git and run this command in the terminal:
@@ -127,6 +121,3 @@ sudo docker run -d -v /path-to-changed-config:/beat/bot/misc/config.py \
 -e SPOTIFY_CLIENT_ID=YOUR_CLIENT_ID \
 -e SPOTIFY_CLIENT_SECRET=YOUR_CLIENT_SECRET beat:version
 ```
-
-## 🆘 Support
-If you find a bug, or you have a question please write here: `supknedme@yandex.com`

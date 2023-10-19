@@ -2,7 +2,7 @@ from nextcord import Intents, Status, Activity, ActivityType
 from nextcord.ext.commands import Bot
 from asyncio import run
 
-from bot.misc import Env, Config, SpotifyWrapper
+from bot.misc import Env, Config, Spotify
 from bot.cogs import register_all_cogs
 
 
@@ -13,4 +13,4 @@ def start_bot():
     register_all_cogs(bot)
 
     bot.run(Env.TOKEN)
-    run(SpotifyWrapper.close())  # closing the SpotifyWrapper when the bot has stopped
+    run(Spotify.close())  # closing the Spotify when the bot has stopped

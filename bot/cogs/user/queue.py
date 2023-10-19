@@ -6,47 +6,41 @@ from random import shuffle
 from bot.misc import Config, GuildPlayData
 
 
-class QueueCommandsCog(Cog):
+class QueueCog(Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
 
     @slash_command(name='now-playing', description='Shows what track is playing now.', dm_permission=False)
-    async def now_playing_command(self, interaction: Interaction) -> None:
+    async def now_playing_command(self, interaction: Interaction):
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None:
-            await interaction.send(embed=Embed(title='🎵 Current song',
-                                               description='Nothing is playing right now.', color=Config.EMBED_COLOR))
-            return
+            return await interaction.send(embed=Embed(title='🎵 Current song',
+                                                      description='Nothing is playing right now.', color=Config.EMBED_COLOR))
 
         try:
             cur_song = play_data.queue[play_data.cur_song_idx]
         except IndexError:
-            await interaction.send('An unexpected error has occurred. Try using the command again.')
-            return
+            return await interaction.send('An unexpected error has occurred. Try using the command again.')
 
         await interaction.send(embed=Embed(title='🎵 Current song',
                                            description=f'[{cur_song.name}]({cur_song.url})', color=Config.EMBED_COLOR))
 
     @slash_command(name='shuffle', description='Shuffles the entire queue.', dm_permission=False)
-    async def shuffle_command(self, interaction: Interaction) -> None:
+    async def shuffle_command(self, interaction: Interaction):
         vc = interaction.guild.voice_client
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None or not len(play_data.queue) or vc is None:
-            await interaction.send('I am not playing any songs for you.')
-            return
+            return await interaction.send('I am not playing any songs for you.')
 
         if interaction.user.voice is None:
-            await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
-            return
+            return await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
 
         if interaction.user.voice.channel.id != vc.channel.id:
-            await interaction.send('You are in the wrong channel.')
-            return
+            return await interaction.send('You are in the wrong channel.')
 
         if len(play_data.queue) <= 2:
-            await interaction.send('Not enough songs in queue to shuffle.')
-            return
+            return await interaction.send('Not enough songs in queue to shuffle.')
 
         # saving the current song, as it should always be the first song in the shuffled queue
         cur_song = play_data.queue[play_data.cur_song_idx]
@@ -72,29 +66,24 @@ class QueueCommandsCog(Cog):
     async def move_command(self, interaction: Interaction,
                            pos_from: int = SlashOption(description='Position of the song in the queue.', required=True),
                            pos_to: int = SlashOption(description='Position where you want to place the song.',
-                                                     required=True)) -> None:
+                                                     required=True)):
         vc = interaction.guild.voice_client
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None or not len(play_data.queue) or vc is None:
-            await interaction.send('I am not playing any songs for you.')
-            return
+            return await interaction.send('I am not playing any songs for you.')
 
         if interaction.user.voice is None:
-            await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
-            return
+            return await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
 
         if interaction.user.voice.channel.id != vc.channel.id:
-            await interaction.send('You are in the wrong channel.')
-            return
+            return await interaction.send('You are in the wrong channel.')
 
         if pos_from <= 0 or pos_from > len(play_data.queue)\
                 or pos_to <= 0 or pos_to > len(play_data.queue):
-            await interaction.send('One or both of the specified positions are out of the queue.')
-            return
+            return await interaction.send('One or both of the specified positions are out of the queue.')
 
         if pos_from == pos_to:
-            await interaction.send('The positions can\'t be equal.')
-            return
+            return await interaction.send('The positions can\'t be equal.')
 
         pos_from_idx = pos_from - 1
         pos_to_idx = pos_to - 1
@@ -117,24 +106,20 @@ class QueueCommandsCog(Cog):
         dm_permission=False)
     async def remove_command(self, interaction: Interaction,
                              position: int = SlashOption(description='Position of the song in the queue.',
-                                                         required=True)) -> None:
+                                                         required=True)):
         vc = interaction.guild.voice_client
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None or not len(play_data.queue) or vc is None:
-            await interaction.send('I am not playing any songs for you.')
-            return
+            return await interaction.send('I am not playing any songs for you.')
 
         if interaction.user.voice is None:
-            await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
-            return
+            return await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
 
         if interaction.user.voice.channel.id != vc.channel.id:
-            await interaction.send('You are in the wrong channel.')
-            return
+            return await interaction.send('You are in the wrong channel.')
 
         if position <= 0 or position > len(play_data.queue):
-            await interaction.send('The specified position is out of the queue.')
-            return
+            return await interaction.send('The specified position is out of the queue.')
 
         index = position - 1
         if index > play_data.cur_song_idx:
@@ -157,30 +142,26 @@ class QueueCommandsCog(Cog):
         vc = interaction.guild.voice_client
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None or not len(play_data.queue) or vc is None:
-            await interaction.send('I am not playing any songs for you.')
-            return
+            return await interaction.send('I am not playing any songs for you.')
 
         if interaction.user.voice is None:
-            await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
-            return
+            return await interaction.send(f'{interaction.user.mention}, You have to be connected to a voice channel.')
 
         if interaction.user.voice.channel.id != vc.channel.id:
-            await interaction.send('You are in the wrong channel.')
-            return
+            return await interaction.send('You are in the wrong channel.')
 
         GuildPlayData.remove_play_data(interaction.guild_id)
         interaction.guild.voice_client.stop()
         await interaction.send('✅ Successfully cleared the queue.')
 
     @slash_command(name='queue', description='Shows current queue of songs.', dm_permission=False)
-    async def queue_command(self, interaction: Interaction) -> None:
+    async def queue_command(self, interaction: Interaction):
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
         if play_data is None or not len(play_data.queue):
-            await interaction.send(embed=Embed(
+            return await interaction.send(embed=Embed(
                 title='Current Queue',
                 description='Your current queue is empty!',
                 color=Config.EMBED_COLOR))
-            return
 
         # splitting the queue into arrays of 15 songs
         divided_queue = play_data.queue

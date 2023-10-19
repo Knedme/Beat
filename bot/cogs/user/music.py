@@ -3,10 +3,10 @@ from nextcord import slash_command, Interaction, VoiceChannel, VoiceClient, Slas
 from nextcord.ext.commands import Cog, Bot
 from typing import Union
 
-from bot.misc import Config, YouTubeWrapper, SpotifyWrapper, GuildPlayData, QueueItem
+from bot.misc import Config, YouTube, Spotify, GuildPlayData, QueueItem
 
 
-class MusicCommandsCog(Cog):
+class MusicCog(Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -104,10 +104,9 @@ class MusicCommandsCog(Cog):
             GuildPlayData.remove_play_data(member.guild.id)
 
     @slash_command(name='join', description='The bot joins to your voice channel.', dm_permission=False)
-    async def join_command(self, interaction: Interaction) -> None:
+    async def join_command(self, interaction: Interaction):
         if interaction.user.voice is None:
-            await interaction.send(f'{interaction.user.mention}, you have to be connected to a voice channel.')
-            return
+            return await interaction.send(f'{interaction.user.mention}, you have to be connected to a voice channel.')
 
         channel = await self.__join_user_channel(interaction)
         if channel is None:
@@ -120,12 +119,11 @@ class MusicCommandsCog(Cog):
         description='The bot joins to your voice channel and plays music from a known link or a search query.',
         dm_permission=False)
     async def play_command(self, interaction: Interaction,
-                           query: str = SlashOption(description='Known link or a search query', required=True)) -> None:
+                           query: str = SlashOption(description='Known link or a search query', required=True)):
         await interaction.response.defer()
 
         if interaction.user.voice is None:
-            await interaction.send(f'{interaction.user.mention}, you have to be connected to a voice channel.')
-            return
+            return await interaction.send(f'{interaction.user.mention}, you have to be connected to a voice channel.')
 
         channel = await self.__join_user_channel(interaction)
         if channel is None:
@@ -137,23 +135,20 @@ class MusicCommandsCog(Cog):
                 for el in query.split():  # getting an url from the query
                     if 'youtube.com' in el.lower() or 'youtu.be' in el.lower():
                         original_url = el
-                        if not await YouTubeWrapper.is_valid_url(original_url):  # YouTube url validation
-                            await interaction.send('Unknown YouTube url.')
-                            return
+                        if not await YouTube.is_valid_url(original_url):  # YouTube url validation
+                            return await interaction.send('Unknown YouTube url.')
                         break
             else:
-                original_url = await YouTubeWrapper.search(query)
+                original_url = await YouTube.search(query)
                 if original_url is None:
-                    await interaction.send('No results found for your search query.')
-                    return
+                    return await interaction.send('No results found for your search query.')
 
             if 'list=' not in original_url:  # check if the link leads to a playlist
-                song_obj = await YouTubeWrapper.video(original_url)
+                song_obj = await YouTube.video(original_url)
                 if song_obj.src_url is None:  # error handling
-                    await interaction.send('An error occurred while processing YouTube video.')
-                    return
+                    return await interaction.send('An error occurred while processing YouTube video.')
             else:
-                song_obj = await YouTubeWrapper.playlist(original_url)
+                song_obj = await YouTube.playlist(original_url)
                 if song_obj.src_url is None:
                     await interaction.channel.send(
                         'An error occurred while processing the first video in the playlist.')
@@ -164,37 +159,33 @@ class MusicCommandsCog(Cog):
                     break
 
             if 'track' in original_url:
-                song_obj = await SpotifyWrapper.track(original_url)
+                song_obj = await Spotify.track(original_url)
                 if song_obj.name is not None and song_obj.src_url is None:
-                    await interaction.send(
+                    return await interaction.send(
                         'An error occurred while processing the Spotify track or this track wasn\'t found.')
-                    return
             elif 'album' in original_url:
-                song_obj = await SpotifyWrapper.album(original_url)
+                song_obj = await Spotify.album(original_url)
                 if song_obj.name is not None and song_obj.src_url is None:
                     await interaction.channel.send(
                         'An error occurred while processing the first track of the Spotify album or'
                         ' this track wasn\'t found.')
             elif 'playlist' in original_url:
-                song_obj = await SpotifyWrapper.playlist(original_url)
+                song_obj = await Spotify.playlist(original_url)
                 if song_obj.name is not None:
                     if song_obj.playlist_remaining_urls is None:
-                        await interaction.send('There is no tracks in this Spotify playlist.')
-                        return
+                        return await interaction.send('There is no tracks in this Spotify playlist.')
                     if song_obj.src_url is None:
                         await interaction.channel.send(
                             'An error occurred while processing the first track of the Spotify playlist or'
                             ' this track wasn\'t found.')
 
             if song_obj is None or song_obj.name is None:
-                await interaction.send('Unknown Spotify url.')
-                return
+                return await interaction.send('Unknown Spotify url.')
 
         # if the bot has been disconnected by this moment, stop the command execution
         vc = interaction.guild.voice_client
         if vc is None:
-            await interaction.send('The bot was disconnected from the voice channel.')
-            return
+            return await interaction.send('The bot was disconnected from the voice channel.')
 
         # adding song to queue
         play_data = GuildPlayData.get_play_data(interaction.guild_id)
@@ -231,7 +222,7 @@ class MusicCommandsCog(Cog):
         # adding the remaining videos from the YouTube playlist to queue
         if song_obj.type_ == 'youtube_playlist':
             for video_url in song_obj.playlist_remaining_urls:
-                video = await YouTubeWrapper.video(video_url)
+                video = await YouTube.video(video_url)
                 if video.src_url is None:
                     await interaction.channel.send(
                         'An error occurred while processing one of the playlist videos.')
@@ -253,7 +244,7 @@ class MusicCommandsCog(Cog):
         # adding the remaining videos from the Spotify album/playlist to queue
         elif song_obj.type_ == 'spotify_playlist':
             for track_url in song_obj.playlist_remaining_urls:
-                track = await SpotifyWrapper.track(track_url)
+                track = await Spotify.track(track_url)
                 if track.src_url is None:
                     await interaction.channel.send(
                         'An error occurred while processing one of the Spotify album/playlist tracks or'
@@ -274,6 +265,6 @@ class MusicCommandsCog(Cog):
             await interaction.channel.send('✅ Spotify album/playlist was fully added to the queue.')
 
     @slash_command(name='lofi', description='Joins to the channel and plays lofi hip hop.', dm_permission=False)
-    async def lofi_command(self, interaction: Interaction) -> None:
+    async def lofi_command(self, interaction: Interaction):
         # just calling play_command method with 'lofi hip hop radio' query
         await self.play_command(interaction, 'lofi hip hop radio')

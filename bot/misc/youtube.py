@@ -11,7 +11,7 @@ from ytmusicapi import YTMusic
 from bot.misc import SongObject, Config
 
 
-class YouTubeWrapper(ABC):
+class YouTube(ABC):
 
     @staticmethod
     async def is_valid_url(url: str) -> bool:

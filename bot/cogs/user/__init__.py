@@ -1,6 +1,6 @@
-from .basic_commands import BasicCommandsCog
-from .music_commands import MusicCommandsCog
-from .control_commands import ControlCommandsCog
-from .queue_commands import QueueCommandsCog
+from .basic import BasicCog
+from .music import MusicCog
+from .control import ControlCog
+from .queue import QueueCog
 
 from .main import register_user_cogs

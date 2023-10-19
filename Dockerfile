@@ -1,4 +1,4 @@
-FROM python:3.11.4-bookworm
+FROM python:3.11.6-bookworm
 RUN apt-get update -qy
 RUN apt-get install -qy ffmpeg
 COPY . /beat

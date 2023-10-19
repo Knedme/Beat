@@ -5,10 +5,10 @@ from async_spotify.authentification import SpotifyAuthorisationToken
 from async_spotify.authentification.authorization_flows import ClientCredentialsFlow
 from async_spotify.spotify_errors import SpotifyAPIError
 
-from bot.misc import Env, SongObject, YouTubeWrapper
+from bot.misc import Env, SongObject, YouTube
 
 
-class SpotifyWrapper(ABC):
+class Spotify(ABC):
     __spotify_client: Union[None, SpotifyApiClient] = None  # async_spotify client
 
     class __RenewToken:
@@ -63,13 +63,13 @@ class SpotifyWrapper(ABC):
             track_name += ', ' + track_info['artists'][i + 1]['name']
         track_name += ' - ' + track_info['name']
 
-        track_yt_url = await YouTubeWrapper.search_ytm(track_name)
+        track_yt_url = await YouTube.search_ytm(track_name)
         if track_yt_url is None:
-            track_yt_url = await YouTubeWrapper.search(track_name)
+            track_yt_url = await YouTube.search(track_name)
             if track_yt_url is None:
                 return SongObject('spotify_track', track_name, None, None)
 
-        yt_video_info = await YouTubeWrapper.video(track_yt_url)
+        yt_video_info = await YouTube.video(track_yt_url)
         return SongObject('spotify_track', track_name, track_info['external_urls']['spotify'], yt_video_info.src_url)
 
     @classmethod
