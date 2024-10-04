@@ -1,5 +1,4 @@
-from nextcord.ext.commands import Bot
-
+from discord.ext.commands import Bot
 from bot.cogs.other import register_other_cogs
 from bot.cogs.user import register_user_cogs
 

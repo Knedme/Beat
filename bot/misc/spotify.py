@@ -4,7 +4,6 @@ from async_spotify import SpotifyApiClient
 from async_spotify.authentification import SpotifyAuthorisationToken
 from async_spotify.authentification.authorization_flows import ClientCredentialsFlow
 from async_spotify.spotify_errors import SpotifyAPIError
-
 from bot.misc import Env, SongObject, YouTube
 
 

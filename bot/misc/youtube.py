@@ -5,9 +5,8 @@ from typing import Union
 from asyncio import get_event_loop
 from concurrent.futures import ThreadPoolExecutor
 from yt_dlp import YoutubeDL
-from pytube import Playlist
+from pytubefix import Playlist
 from ytmusicapi import YTMusic
-
 from bot.misc import SongObject, Config
 
 
@@ -42,19 +41,13 @@ class YouTube(ABC):
         except IndexError:
             return None
 
-    @staticmethod
-    async def extract_video_info(url: str) -> dict:
-        """Extracts all info (including the source audio url) from video."""
-
-        return await get_event_loop().run_in_executor(
-            ThreadPoolExecutor(),
-            YoutubeDL(Config.YDL_OPTIONS).extract_info, url, False)
-
     @classmethod
     async def video(cls, url: str) -> SongObject:
         """Extracts the data needed to play the video."""
 
-        video_info = await cls.extract_video_info(url)
+        video_info = await get_event_loop().run_in_executor(
+            ThreadPoolExecutor(),
+            YoutubeDL(Config.YDL_OPTIONS).extract_info, url, False)
         if video_info is None:  # if an error occurs, return an empty SongObject
             return SongObject('youtube_video', None, None, None)
         return SongObject('youtube_video', video_info['fulltitle'], video_info['original_url'], video_info['url'])

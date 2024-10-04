@@ -1,7 +1,6 @@
-from nextcord import slash_command, Interaction, Embed
-from nextcord.ext.commands import Cog, Bot
+from discord import slash_command, ApplicationContext, Embed
+from discord.ext.commands import Cog, Bot
 from math import isnan, isinf
-
 from bot.misc import Config
 
 
@@ -11,19 +10,19 @@ class BasicCog(Cog):
         self.bot = bot
 
     @slash_command(name='info', description='Information about the bot.')
-    async def info_command(self, interaction: Interaction):
+    async def info_command(self, ctx: ApplicationContext):
         embed = Embed(title=f'Information about {Config.BOT_NAME}', color=Config.EMBED_COLOR)
         embed.add_field(name='Server count:', value=f'🔺 `{len(self.bot.guilds)}`', inline=False)
         embed.add_field(name='Bot version:', value=f'✨ `{Config.BOT_VERSION}`', inline=False)
-        embed.add_field(name='The bot is written on:', value='🐍 `Nextcord`', inline=False)
+        embed.add_field(name='The bot is written on:', value='🐍 `Pycord`', inline=False)
         embed.add_field(name='Bot created by:', value='🔶 `Knedme`', inline=False)
         embed.add_field(name='GitHub repository:', value='📕 [Click Here](https://github.com/Knedme/Beat)')
         embed.set_thumbnail(url=Config.BOT_LOGO_URL)
         embed.set_footer(text=f'v{Config.BOT_VERSION} | Write /commands for the command list.')
-        await interaction.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @slash_command(name='commands', description='Shows a list of commands')
-    async def commands_command(self, interaction: Interaction):
+    async def commands_command(self, ctx: ApplicationContext):
         embed = Embed(
             title=f'{Config.BOT_NAME} commands',
             color=Config.EMBED_COLOR)
@@ -53,22 +52,22 @@ class BasicCog(Cog):
         embed.add_field(name='/commands', value='Shows a list of commands.', inline=False)
         embed.add_field(name='/info', value='Shows information about the bot.')
         embed.set_footer(text=f'v{Config.BOT_VERSION}')
-        await interaction.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @slash_command(
         name='latency',
         description='Checks bot\'s response time to Discord.',
         dm_permission=False)
-    async def latency_command(self, interaction: Interaction):
+    async def latency_command(self, ctx: ApplicationContext):
         bot_latency = self.bot.latency
         if isnan(bot_latency):  # bot latency can be NaN
-            return await interaction.send('Couldn\'t get the latency.')
+            return await ctx.send('Couldn\'t get the latency.')
         info = f'Bot latency is: **`{round(bot_latency * 1000)}ms`**'
 
-        vc = interaction.guild.voice_client
+        vc = ctx.guild.voice_client
         if vc is not None:
             vc_latency = vc.latency
             if not isinf(vc_latency):  # vc latency can be infinite
                 info += f'\nAudio latency is: **`{round(vc_latency * 1000)}ms`**'
 
-        await interaction.send(info)
+        await ctx.respond(info)

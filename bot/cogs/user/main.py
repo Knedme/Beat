@@ -1,5 +1,4 @@
-from nextcord.ext.commands import Bot
-
+from discord.ext.commands import Bot
 from bot.cogs.user import BasicCog, MusicCog, ControlCog, QueueCog
 
 

@@ -1,5 +1,5 @@
-from nextcord import Intents, Status, Activity, ActivityType
-from nextcord.ext.commands import Bot
+from discord import Intents, Status, Activity, ActivityType
+from discord.ext.commands import Bot
 from asyncio import run
 
 from bot.misc import Env, Config, Spotify

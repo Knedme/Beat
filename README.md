@@ -2,12 +2,12 @@
 <img src="https://raw.githubusercontent.com/Knedme/Beat/master/logo/round1x.png" alt="beat-logo" width="15%" align="right">
 
 # Beat
-**Beat** is a free open source discord music bot for playing music from YouTube and Spotify. **Beat** is done on [Nextcord](https://docs.nextcord.dev/en/stable/).
+**Beat** is a free open source discord music bot for playing music from YouTube and Spotify. **Beat** is made using [Pycord](https://docs.pycord.dev/en/stable/).
 
 Bot structure from: https://github.com/BaggerFast/NextcordTemplate
 
 ## 🌌 Current Version
-Current bot version is **1.4.2**.
+Current bot version is **1.4.3**.
 
 ## 📚 Commands
 
@@ -76,7 +76,7 @@ Shows information about the bot.
 
 ## ⬇️ Getting started
 
-### 1. Install Python 3.11.6
+### 1. Install Python 3.12.7
 
 ### 2. Clone this repo
 Install Git and run this command in the terminal:

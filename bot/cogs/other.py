@@ -1,5 +1,4 @@
-from nextcord.ext.commands import Bot, Cog
-
+from discord.ext.commands import Bot, Cog
 from bot.misc import Config, Spotify
 
 
