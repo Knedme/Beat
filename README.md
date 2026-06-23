@@ -1,7 +1,5 @@
 
-<img src="https://raw.githubusercontent.com/Knedme/Beat/master/logo/round1x.png" alt="beat-logo" width="15%" align="right">
-
-# Beat
+# Beat<img src="https://raw.githubusercontent.com/Knedme/Beat/master/logo/round1x.png" alt="beat-logo" width="15%" align="right">
 **Beat** is a free open source discord music bot for playing music from YouTube and Spotify. **Beat** is made using [Pycord](https://docs.pycord.dev/en/stable/).
 
 Bot structure from: https://github.com/BaggerFast/NextcordTemplate
